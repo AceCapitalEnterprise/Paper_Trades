@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import pandas_ta as ta
 import time
+import traceback
 from datetime import date, datetime, timedelta, time as t
 import csv, re, time, math
 
@@ -215,35 +216,42 @@ while True:
         
         j=1
         for i in range(j):
-            leg3 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
-                                                            exchange_code="NFO",
-                                                            product_type="options",
-                                                            expiry_date=f'{expiry}T06:00:00.000Z',
-                                                            right="put",
-                                                            strike_price=otm_pe)
-            if 'Success' in leg3:
-                leg3 = leg3['Success']
-                leg3 = pd.DataFrame(leg3)
-                leg3_cmp = float(leg3['ltp'])
-                break
-            else:
-                j+=1
+            try:
+                leg3 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
+                                                                exchange_code="NFO",
+                                                                product_type="options",
+                                                                expiry_date=f'{expiry}T06:00:00.000Z',
+                                                                right="put",
+                                                                strike_price=otm_pe)
+                if 'Success' in leg3:
+                    leg3 = leg3['Success']
+                    leg3 = pd.DataFrame(leg3)
+                    leg3_cmp = float(leg3['ltp'])
+                    break
+                else:
+                    j+=1
+            except Exception as e:
+                print(traceback.print_exc())
         # print(leg3)
         
         j=1
         for i in range(j):
-            leg4 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
-                                                            exchange_code="NFO",
-                                                            product_type="options",
-                                                            expiry_date=f'{expiry}T06:00:00.000Z',
-                                                            right="call",
-                                                            strike_price=otm_ce)
-            if 'Success' in leg4:
-                leg4 = leg4['Success']
-                leg4 = pd.DataFrame(leg4)
-                leg4_cmp = float(leg4['ltp'])
-                break
-            else:
+            try:
+                leg4 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
+                                                                exchange_code="NFO",
+                                                                product_type="options",
+                                                                expiry_date=f'{expiry}T06:00:00.000Z',
+                                                                right="call",
+                                                                strike_price=otm_ce)
+                if 'Success' in leg4:
+                    leg4 = leg4['Success']
+                    leg4 = pd.DataFrame(leg4)
+                    leg4_cmp = float(leg4['ltp'])
+                    break
+                else:
+                    j+=1
+            except Exception as e:
+                print(traceback.print_exc())
                 j+=1
         # print(leg4)
 
