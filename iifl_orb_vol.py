@@ -38,6 +38,37 @@ if response.status_code == 200:
 else:
     print("Error:", response.text)
 
+
+import requests
+import json
+
+# Replace these with your actual keys
+interactive_key = "def30df21fe5fd3ec4e627"
+interactive_secret = "Qrfk434@vM"
+
+
+# URL for token generation
+url = "https://ttblaze.iifl.com/interactive/user/session"
+
+# Request payload
+payload = {
+    "secretKey": interactive_secret,
+    "appKey": interactive_key,
+    "source": "WEBAPI"
+}
+
+# Send POST request for authentication
+response = requests.post(url, json=payload)
+
+# Process response
+if response.status_code == 200:
+    data = response.json()
+    #print(data)
+    interactive_access_token = data.get("result", {}).get("token")
+    print("Access token received:", interactive_access_token)
+else:
+    print("Error:", response.text)
+
 from blaze_api import get_nifty_future_instrument_id, get_nifty_future_ohlc_with_retry, get_ltp_with_retry, get_nifty_option_instrument, get_nifty_option_ohlc_with_retry, get_order_detail, place_options_order 
 
 Call_Buy = None
