@@ -10,7 +10,7 @@ import time
 from datetime import datetime, time as t
 import csv
 # from breeze_connect import BreezeConnect
-from breez1 import *
+from breeze1 import *
 import logging
 
 # Initialize ICICI Breeze API
