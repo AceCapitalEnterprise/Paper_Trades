@@ -92,11 +92,16 @@ while True:
                                                    right="others",
                                                    strike_price="0")
 
+            if 'Success' in nifty_spot:
+                nifty_spot = nifty_spot['Success']
+                nifty_spot = pd.DataFrame(nifty_spot)
+                nifty_spot = nifty_spot['ltp'][0]
+            else:
+                j+=1
         except Exception as e:
+            j+=1
             print(traceback.print_exc(),"   ",e)
-        nifty_spot = nifty_spot['Success']
-        nifty_spot = pd.DataFrame(nifty_spot)
-        nifty_spot = nifty_spot['ltp'][0]
+            time.sleep(5)
                 
         atm_strike = round(nifty_spot / 100) * 100
         #otm_pe = atm_strike - 600
