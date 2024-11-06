@@ -38,7 +38,7 @@ if response.status_code == 200:
 else:
     print("Error:", response.text)
 
-from vs_check.blaze_api import get_nifty_future_instrument_id, get_nifty_future_ohlc_with_retry, get_ltp_with_retry, get_nifty_option_instrument, get_nifty_option_ohlc_with_retry, get_order_detail, place_options_order 
+from blaze_api import get_nifty_future_instrument_id, get_nifty_future_ohlc_with_retry, get_ltp_with_retry, get_nifty_option_instrument, get_nifty_option_ohlc_with_retry, get_order_detail, place_options_order 
 
 Call_Buy = None
 Put_Buy = None
