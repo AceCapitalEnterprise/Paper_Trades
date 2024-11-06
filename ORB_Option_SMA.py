@@ -99,7 +99,7 @@ def update_volume_conditions(factor, last_row):
     volume_low = last_row['low']
     logging.info(f"{datetime.now()} Volume condition met with factor: {factor}, High={volume_high}, Low={volume_low}")
 
-def retry_api_call(func, retries=5, delay=5, backoff=2):
+def retry_api_call(func, retries=10, delay=10, backoff=2):
     """Retry API calls with exponential backoff."""
     attempt = 0
     while attempt < retries:
