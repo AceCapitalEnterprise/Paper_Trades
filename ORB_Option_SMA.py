@@ -9,7 +9,7 @@ import time
 from datetime import datetime, timedelta, time as t
 import csv
 # from breeze_connect import BreezeConnect
-from breez1 import *
+from breeze1 import *
 
 import logging
 
