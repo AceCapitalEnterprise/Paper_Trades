@@ -98,7 +98,8 @@ while True:
         atm_strike = round(nifty_spot / 100) * 100
         otm_pe = atm_strike - 600
         otm_ce = atm_strike + 600
-        for i in range(0,2):
+        j=1
+        for i in range(j):
             try:
                 leg1 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
                                                                 exchange_code="NFO",
@@ -106,15 +107,22 @@ while True:
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
                                                                 right="call",
                                                                 strike_price=atm_strike)
-            except:
+                if 'Success' in leg1:
+                    leg1 = leg1['Success']
+                    leg1 = pd.DataFrame(leg1)
+                    premium1 = float(leg1['ltp'][0]) 
+                else:
+                    j+=1
+            except Exception as e:
+                j+=1
+                print(traceback.print_exc())
+                time.sleep(5)
                 pass
         # leg1
-        leg1 = leg1['Success']
-        leg1 = pd.DataFrame(leg1)
-        premium1 = float(leg1['ltp'][0])   
+          
         
-        
-        for i in range(2):
+        j=1
+        for i in range(j):
             try:
                 leg2 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
                                                                 exchange_code="NFO",
@@ -122,18 +130,26 @@ while True:
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
                                                                 right="put",
                                                                 strike_price=atm_strike)
+                if 'Success' in leg2:
+                    leg2 = leg2['Success']
+                    leg2 = pd.DataFrame(leg2)
+                    premium2 = float(leg2['ltp'][0])
+                else:
+                    j+=1
             except:
-                pass
+                print(traceback.print_exc())
+                j+=1
+                time.sleep(5)
+                # pass
         # leg2
-        leg2 = leg2['Success']
-        leg2 = pd.DataFrame(leg2)
-        premium2 = float(leg2['ltp'][0])
+        
         
         premium_match = 0.10*premium1
         if ((premium1+premium_match) > premium2) and (premium2 > (premium1-premium_match)):
             time.sleep(2)
             order=1
-            for i in range(2):
+            j=1
+            for i in range(j):
                 try:
                     leg3 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
                                                                 exchange_code="NFO",
@@ -141,15 +157,22 @@ while True:
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
                                                                 right="put",
                                                                 strike_price=otm_pe)
+                    if 'Success' in leg3:
+                        leg3 = leg3['Success']
+                        leg3 = pd.DataFrame(leg3)
+                        premium3 = float(leg3['ltp'])
+                    else:
+                        j+=1
                 except:
-                    pass
+                    print(traceback.print_exc())
+                    j+=1
+                    time.sleep(5)
+                    # pass
             # print(leg3)
-            leg3 = leg3['Success']
-            leg3 = pd.DataFrame(leg3)
-            premium3 = float(leg3['ltp'])
+            
                     
-                
-            for i in range(2):
+            j=1
+            for i in range(j):
                 try:
                     leg4 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
                                                                 exchange_code="NFO",
@@ -157,12 +180,19 @@ while True:
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
                                                                 right="call",
                                                                 strike_price=otm_ce)
+                    if 'Success' in leg4:
+                        leg4 = leg4['Success']
+                        leg4 = pd.DataFrame(leg4)
+                        premium4 = float(leg4['ltp'])    
+                    else:
+                        j+=1
                 except:
-                    pass
+                    j+=1
+                    print(traceback.print_exc())
+                    time.sleep(5)
+                    # pass
             # print(leg4)
-            leg4 = leg4['Success']
-            leg4 = pd.DataFrame(leg4)
-            premium4 = float(leg4['ltp'])    
+
                 
 
             initial_combined_premium = (premium3 + premium4) - (premium1 + premium2)
@@ -177,7 +207,8 @@ while True:
             
     if order == 1:
         time.sleep(20)
-        for i in range(2):
+        j=1
+        for i in range(j):
             try:
                 leg1 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
                                                             exchange_code="NFO",
@@ -185,12 +216,19 @@ while True:
                                                             expiry_date=f'{expiry}T06:00:00.000Z',
                                                             right="call",
                                                             strike_price=atm_strike)
+                if 'Success' in leg1:
+                    leg1 = leg1['Success']
+                    leg1 = pd.DataFrame(leg1)
+                    leg1_cmp = float(leg1['ltp'])
+                else:
+                    j+=1
             except:
-                pass
+                print(traceback.print_exc())
+                j+=1
+                time.sleep(5)
+                # pass
         # print(leg1)
-        leg1 = leg1['Success']
-        leg1 = pd.DataFrame(leg1)
-        leg1_cmp = float(leg1['ltp'])
+        
         j=1
         for i in range(j):
             try:
@@ -210,6 +248,7 @@ while True:
             except Exception as e:
                 print(e)
                 j+=1
+                time.sleep(5)
                 
                 
         # print(leg2)
@@ -232,6 +271,7 @@ while True:
                     j+=1
             except Exception as e:
                 print(traceback.print_exc())
+                time.sleep(5)
         # print(leg3)
         
         j=1
@@ -253,6 +293,7 @@ while True:
             except Exception as e:
                 print(traceback.print_exc())
                 j+=1
+                time.sleep(5)
         # print(leg4)
 
             
