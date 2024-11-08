@@ -127,7 +127,7 @@ while True:
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
                                                                 right="call",
                                                                 strike_price=atm)
-                        if leg['Status']==200:
+                        if 'Success' in leg:
                             leg = leg['Success']
                             leg = pd.DataFrame(leg)
                             sell_price = float(leg['ltp'][0])
