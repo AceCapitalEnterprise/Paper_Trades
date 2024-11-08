@@ -172,7 +172,7 @@ while True:
                             ltp_value = float(leg_df['ltp'])
                             break    
                         # ltpsput.append({'strike_price': strike, 'ltp': ltp_value})
-                        else
+                        else:
                             j+=1
                     
                     except Exception as e:
