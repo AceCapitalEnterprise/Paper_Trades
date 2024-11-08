@@ -115,9 +115,9 @@ while True:
                     j+=1
             except Exception as e:
                 j+=1
-                print(traceback.print_exc())
+                # print(traceback.print_exc())
                 time.sleep(5)
-                pass
+                # pass
         # leg1
           
         
@@ -137,7 +137,7 @@ while True:
                 else:
                     j+=1
             except:
-                print(traceback.print_exc())
+                # print(traceback.print_exc())
                 j+=1
                 time.sleep(5)
                 # pass
@@ -164,7 +164,7 @@ while True:
                     else:
                         j+=1
                 except:
-                    print(traceback.print_exc())
+                    # print(traceback.print_exc())
                     j+=1
                     time.sleep(5)
                     # pass
@@ -188,7 +188,7 @@ while True:
                         j+=1
                 except:
                     j+=1
-                    print(traceback.print_exc())
+                    # print(traceback.print_exc())
                     time.sleep(5)
                     # pass
             # print(leg4)
@@ -223,7 +223,7 @@ while True:
                 else:
                     j+=1
             except:
-                print(traceback.print_exc())
+                # print(traceback.print_exc())
                 j+=1
                 time.sleep(5)
                 # pass
@@ -246,7 +246,7 @@ while True:
                 else:
                     j+=1
             except Exception as e:
-                print(e)
+                # print(e)
                 j+=1
                 time.sleep(5)
                 
@@ -270,7 +270,8 @@ while True:
                 else:
                     j+=1
             except Exception as e:
-                print(traceback.print_exc())
+                j+=1
+                # print(traceback.print_exc())
                 time.sleep(5)
         # print(leg3)
         
@@ -291,7 +292,7 @@ while True:
                 else:
                     j+=1
             except Exception as e:
-                print(traceback.print_exc())
+                # print(traceback.print_exc())
                 j+=1
                 time.sleep(5)
         # print(leg4)
