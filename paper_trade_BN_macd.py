@@ -15,7 +15,7 @@ import csv, re, time, math
 time_1 = t(9,15)
 time_2 = t(15,30)
 
-expiry = '2024-11-06'
+expiry = '2024-11-13'
 order = 0
 #qty = 25
 
