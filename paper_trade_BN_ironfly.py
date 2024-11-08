@@ -111,6 +111,7 @@ while True:
                     leg1 = leg1['Success']
                     leg1 = pd.DataFrame(leg1)
                     premium1 = float(leg1['ltp'][0]) 
+                    break
                 else:
                     j+=1
             except Exception as e:
@@ -134,6 +135,7 @@ while True:
                     leg2 = leg2['Success']
                     leg2 = pd.DataFrame(leg2)
                     premium2 = float(leg2['ltp'][0])
+                    break
                 else:
                     j+=1
             except:
@@ -161,6 +163,7 @@ while True:
                         leg3 = leg3['Success']
                         leg3 = pd.DataFrame(leg3)
                         premium3 = float(leg3['ltp'])
+                        break
                     else:
                         j+=1
                 except:
@@ -184,6 +187,7 @@ while True:
                         leg4 = leg4['Success']
                         leg4 = pd.DataFrame(leg4)
                         premium4 = float(leg4['ltp'])    
+                        break
                     else:
                         j+=1
                 except:
@@ -220,6 +224,7 @@ while True:
                     leg1 = leg1['Success']
                     leg1 = pd.DataFrame(leg1)
                     leg1_cmp = float(leg1['ltp'])
+                    break
                 else:
                     j+=1
             except:
