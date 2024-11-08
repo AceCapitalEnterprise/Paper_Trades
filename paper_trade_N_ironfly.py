@@ -157,7 +157,7 @@ while True:
             
             for strike in strikes:
                 j=1
-                for i in range(j)
+                for i in range(j):
                     try:
                         leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
                                                                 exchange_code="NFO",
