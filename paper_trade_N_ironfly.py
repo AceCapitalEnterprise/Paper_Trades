@@ -121,7 +121,7 @@ while True:
                     
             except:
                 j+=1
-                print(traceback.print_exc())
+                # print(traceback.print_exc())
                 time.sleep(5)
                 
         j=1
@@ -143,7 +143,7 @@ while True:
                     j+=1
             except:
                 j+=1
-                print(traceback.print_exc())
+                # print(traceback.print_exc())
                 time.sleep(5)
 
         if ((premium1+premium_match) > premium2) and (premium2 > (premium1-premium_match)):
@@ -177,8 +177,8 @@ while True:
                     
                     except Exception as e:
                         j+=1
-                        print(e)
-                        print(traceback.print_exc())
+                        # print(e)
+                        # print(traceback.print_exc())
                         time.sleep(5)
                 ltps.append({'strike_price': strike, 'ltp': ltp_value})
                     
@@ -210,7 +210,7 @@ while True:
                     else:
                         j+=1
                 except Exception as e:
-                    print(traceback.print_exc())
+                    # print(traceback.print_exc())
                     j+=1
                     time.sleep(5)
             
@@ -241,8 +241,8 @@ while True:
                     
                     except Exception as e:
                         j+=1
-                        print(e)
-                        print(traceback.print_exc())
+                        # print(e)
+                        # print(traceback.print_exc())
                         time.sleep(5)
                 ltpsput.append({'strike_price': strike, 'ltp': ltp_value})
                     
@@ -275,10 +275,10 @@ while True:
                     else:
                         j+=1
                 except Exception as e:
-                    print(e)
-                    print(traceback.print_exc())
+                    # print(e)
+                    # print(traceback.print_exc())
                     j+=1
-                    time.sleep(10)
+                    time.sleep(5)
 
                 
             initial_combined_premium = (premium3 + premium4) - (premium1 + premium2)
@@ -313,7 +313,7 @@ while True:
                     j+=1
             except:
                 j+=1
-                print(traceback.print_exc())
+                # print(traceback.print_exc())
                 time.sleep(5)
         j=1
         for i in range(j):
@@ -332,8 +332,8 @@ while True:
                 else:
                     j+=1
             except Exception as e:
-                print(e)
-                print(traceback.print_exc())
+                # print(e)
+                # print(traceback.print_exc())
                 j+=1
                 time.sleep(10)
         
@@ -354,8 +354,8 @@ while True:
                 else:
                     j+=1
             except Exception as e:
-                print(e)
-                print(traceback.print_exc())
+            #     print(e)
+            #     print(traceback.print_exc())
                 j+=1
                 time.sleep(10)
 
@@ -376,7 +376,7 @@ while True:
                 else:
                     j+=1
             except Exception as e:
-                print(traceback.print_exc())
+                # print(traceback.print_exc())
                 j+=1
                 time.sleep(5)
             
