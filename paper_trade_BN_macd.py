@@ -62,20 +62,26 @@ while True:
                 atm = round(last_row['close'] / 100) * 100
                 j=1
                 for i in range(j):
-                    leg = breeze.get_option_chain_quotes(stock_code="CNXBAN",
-                                                            exchange_code="NFO",
-                                                            product_type="options",
-                                                            expiry_date=f'{expiry}T06:00:00.000Z',
-                                                            right="call",
-                                                            strike_price=atm)
-                    if leg['Status']==200:
-                        leg = leg['Success']
-                        leg = pd.DataFrame(leg)
-                        buy_price = float(leg['ltp'][0])
-                        
-                        print(now, 'buy', atm, 'call at:', buy_price)
-                    else:
+                    try:
+                        leg = breeze.get_option_chain_quotes(stock_code="CNXBAN",
+                                                                exchange_code="NFO",
+                                                                product_type="options",
+                                                                expiry_date=f'{expiry}T06:00:00.000Z',
+                                                                right="call",
+                                                                strike_price=atm)
+                        if 'Success' in leg:
+                            leg = leg['Success']
+                            leg = pd.DataFrame(leg)
+                            buy_price = float(leg['ltp'][0])
+                            
+                            print(now, 'buy', atm, 'call at:', buy_price)
+                            break
+                        else:
+                            j+=1
+                    except:
                         j+=1
+                        time.sleep(5)
+                
                 
             elif last_row['RSI_14']<30 and second_last['RSI_14']<30 and last_row['MACD']<second_last['MACD'] and second_last['MACD']<third_last['MACD'] :
                 entry_time = datetime.now().strftime('%H:%M:%S')
@@ -83,21 +89,26 @@ while True:
                 atm = round(last_row['close'] / 100) * 100
                 j=1
                 for i in range(j):
-                    leg = breeze.get_option_chain_quotes(stock_code="CNXBAN",
-                                                            exchange_code="NFO",
-                                                            product_type="options",
-                                                            expiry_date=f'{expiry}T06:00:00.000Z',
-                                                            right="put",
-                                                            strike_price=atm)
-                    
-                    if leg['Status']==200:
-                        leg = leg['Success']
-                        leg = pd.DataFrame(leg)
-                        buy_pe_price = float(leg['ltp'][0])
+                    try:
+                        leg = breeze.get_option_chain_quotes(stock_code="CNXBAN",
+                                                                exchange_code="NFO",
+                                                                product_type="options",
+                                                                expiry_date=f'{expiry}T06:00:00.000Z',
+                                                                right="put",
+                                                                strike_price=atm)
                         
-                        print(now, 'buy', atm, 'put at:', buy_pe_price)
-                    else:
+                        if 'Success' in leg:
+                            leg = leg['Success']
+                            leg = pd.DataFrame(leg)
+                            buy_pe_price = float(leg['ltp'][0])
+                            
+                            print(now, 'buy', atm, 'put at:', buy_pe_price)
+                            break
+                        else:
+                            j+=1
+                    except:
                         j+=1
+                        time.sleep(5)
             else:
                 print(last_row['datetime'], 'no trade condition: rsi is ', last_row['RSI_14'], 'macd is ', last_row['MACD'])
                     
@@ -109,21 +120,26 @@ while True:
                 
                 j=1
                 for i in range(j):
-                    leg = breeze.get_option_chain_quotes(stock_code="CNXBAN",
-                                                            exchange_code="NFO",
-                                                            product_type="options",
-                                                            expiry_date=f'{expiry}T06:00:00.000Z',
-                                                            right="call",
-                                                            strike_price=atm)
-                    if leg['Status']==200:
-                        leg = leg['Success']
-                        leg = pd.DataFrame(leg)
-                        sell_price = float(leg['ltp'][0])
-                        
-                        pnl = round(sell_price - buy_price, 2)
-                        print(now, 'exit', atm, 'call pnl is:', pnl)
-                    else:
+                    try:
+                        leg = breeze.get_option_chain_quotes(stock_code="CNXBAN",
+                                                                exchange_code="NFO",
+                                                                product_type="options",
+                                                                expiry_date=f'{expiry}T06:00:00.000Z',
+                                                                right="call",
+                                                                strike_price=atm)
+                        if leg['Status']==200:
+                            leg = leg['Success']
+                            leg = pd.DataFrame(leg)
+                            sell_price = float(leg['ltp'][0])
+                            
+                            pnl = round(sell_price - buy_price, 2)
+                            print(now, 'exit', atm, 'call pnl is:', pnl)
+                            break
+                        else:
+                            j+=1
+                    except:
                         j+=1
+                        time.sleep(5)
                 
                 csv_file = "Paper_trade_BN_macd.csv"
                 try:
@@ -146,22 +162,26 @@ while True:
                 exit_time = datetime.now().strftime('%H:%M:%S')
                 j=1
                 for i in range(j):
-                    leg = breeze.get_option_chain_quotes(stock_code="CNXBAN",
-                                                            exchange_code="NFO",
-                                                            product_type="options",
-                                                            expiry_date=f'{expiry}T06:00:00.000Z',
-                                                            right="put",
-                                                            strike_price=atm)
-                    if leg['Status']==200:
-                        leg = leg['Success']
-                        leg = pd.DataFrame(leg)
-                        sell_pe_price = float(leg['ltp'][0])
-                        
-                        pnl = round(sell_pe_price - buy_pe_price, 2)
-                        print(now, 'exit', atm, 'put pnl is:', pnl)
-                    else:
+                    try:
+                        leg = breeze.get_option_chain_quotes(stock_code="CNXBAN",
+                                                                exchange_code="NFO",
+                                                                product_type="options",
+                                                                expiry_date=f'{expiry}T06:00:00.000Z',
+                                                                right="put",
+                                                                strike_price=atm)
+                        if 'Success' in leg:
+                            leg = leg['Success']
+                            leg = pd.DataFrame(leg)
+                            sell_pe_price = float(leg['ltp'][0])
+                            
+                            pnl = round(sell_pe_price - buy_pe_price, 2)
+                            print(now, 'exit', atm, 'put pnl is:', pnl)
+                            break
+                        else:
+                            j+=1
+                    except:
                         j+=1
-                
+                        time.sleep(5)
                 csv_file = "Paper_trade_BN_macd.csv"
                 try:
                     with open(csv_file, 'x', newline='') as file:
