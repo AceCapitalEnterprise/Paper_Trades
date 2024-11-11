@@ -13,11 +13,6 @@ import csv
 from breeze1 import *
 import logging
 
-# Initialize ICICI Breeze API
-# breeze = BreezeConnect(api_key="77%U3I71634^099gN232777%316Q~v4=")
-# breeze.generate_session(api_secret="9331K77(I8_52JG2K73$5438q95772j@",
-#                         session_token="48857404")
-
 # Define trading parameters
 Call_Buy = None
 Put_Buy = None
@@ -37,11 +32,12 @@ fut_expiry  = "2024-11-28"
 option_expiry_date = "2024-11-14"
 expiry_date = f"{fut_expiry}T07:00:00.000Z"
 option_expiry = f"{option_expiry_date}T07:00:00.000Z"
+option_tick = "14-Nov-2024"
 
 #breeze.ws_connect()
 
-def on_ticks(ticks):
-    print("Ticks: {}".format(ticks))
+#def on_ticks(ticks):
+#    print("Ticks: {}".format(ticks))
     
     
 #breeze.on_ticks = on_ticks
@@ -104,7 +100,7 @@ def update_volume_conditions2(factor, last_row, last_row2):
     volume_low = min(last_row['low'], last_row2['low'])
     logging.info(f"{datetime.now()} Volume condition met with factor: {factor}, High={volume_high}, Low={volume_low}")
 
-def retry_api_call(func, retries=5, delay=5, backoff=2):
+def retry_api_call(func, retries=10, delay=10, backoff=2):
     """Retry API calls with exponential backoff."""
     attempt = 0
     while attempt < retries:
@@ -143,6 +139,60 @@ def get_future_quotes_with_retry(stock_code, exchange_code, product_type, expiry
 def get_order_detail_with_retry(exchange_code, order_id):
     return retry_api_call(
         lambda: breeze.get_order_detail(exchange_code=exchange_code, order_id=order_id))    
+
+last_row=None
+one_tick=None
+
+breeze.ws_connect()
+
+def on_ticks(ticks):
+    global one_tick
+    one_tick=ticks
+
+
+breeze.on_ticks = on_ticks
+
+def initiate_ws(strike_price,right=''):
+    if right=='call':    
+        breeze.subscribe_feeds(exchange_code="NFO",
+                            stock_code="NIFTY",
+                            product_type="options",
+                            expiry_date=option_tick,
+                            right="call",
+                            strike_price=strike_price,
+                            get_exchange_quotes=True,
+                            get_market_depth=False)
+    elif right=='put':
+        breeze.subscribe_feeds(exchange_code="NFO",
+                            stock_code="NIFTY",
+                            product_type="options",
+                            expiry_date=option_tick,
+                            right="put",
+                            strike_price=strike_price,
+                            get_exchange_quotes=True,
+                            get_market_depth=False)
+
+# def save_to_csv(path,mode,df):
+def deactivate_ws(strike_price,right=''):
+    if right=='call':    
+        breeze.unsubscribe_feeds(exchange_code="NFO",
+                            stock_code="NIFTY",
+                            product_type="options",
+                            expiry_date=option_tick,
+                            right="call",
+                            strike_price=strike_price,
+                            get_exchange_quotes=True,
+                            get_market_depth=False)
+    elif right=='put':
+        breeze.unsubscribe_feeds(exchange_code="NFO",
+                            stock_code="NIFTY",
+                            product_type="options",
+                            expiry_date=option_tick,
+                            right="put",
+                            strike_price=strike_price,
+                            get_exchange_quotes=True,
+                            get_market_depth=False)
+
 
 # Check for past ORB breakout
 orb_breakout_occurred = False
@@ -446,52 +496,56 @@ while True:
     if order in [1, -1]:
         print(f"Checking exit conditions at {now}")
         logging.info(f"Checking exit conditions at {now}")
-        time.sleep(5)
+        time.sleep(1)
         current_time = datetime.now()
     
         time_difference = (current_time - entry_time).total_seconds() / 60
         #print(time_difference)
         exit_reason = ''
         if order == 1: 
-            #logging.info(f"Updating Trailing SL at {now}")
-        
-            detail = get_option_chain_quotes_with_retry(stock_code="NIFTY", exchange_code="NFO",
-                                                        product_type="options", expiry_date=option_expiry,
-                                                        right="call", strike_price=strike_price)
-            ltp = pd.DataFrame(detail['Success'])
-            premium = ltp['ltp'][0] 
+            #logging.info(f"Updating Trailing SL at {now}")        
+
+            initiate_ws(str(strike_price),'call')
+            premium=float(one_tick['last'])
             
-            if premium >= sl + 1 + 15:
+            if premium >= sl + 15:
                 sl = adjust_trailing_sl(premium, sl, order)
                 print(f"Stop Loss trailed. Premium: {premium}, New SL: {sl}")
                 logging.info(f"Stop Loss trailed. Premium: {premium}, New SL: {sl}")
                 
 
             if premium <= sl:
+                deactivate_ws(str(strike_price),'call')
                 exit_reason = 'Stoploss Hit'
-            elif time_difference > 30:
-                exit_reason = '30 candle hit'
+            elif premium >= tgt:
+                deactivate_ws(str(strike_price),'call')
+                exit_reason = 'Target Hit'
+            #elif time_difference > 30:
+            #    exit_reason = '30 candle hit'
             elif t(now.hour, now.minute) == t(15, 20):
+                deactivate_ws(strike_price,'call')
                 exit_reason = 'Market Close'
                 
         elif order == -1:
-            detail = get_option_chain_quotes_with_retry(stock_code="NIFTY", exchange_code="NFO",
-                                                        product_type="options", expiry_date=option_expiry,
-                                                        right="put", strike_price=strike_price)
-            ltp = pd.DataFrame(detail['Success'])
-            premium = ltp['ltp'][0] 
+            initiate_ws(str(strike_price),'put')
+            premium=float(one_tick['last'])
             
-            if premium >= sl + 1 + 15:
+            if premium >= sl + 15:
                 sl = adjust_trailing_sl(premium, sl, order)
                 print(f"Stop Loss trailed. Premium: {premium}, New SL: {sl}")
                 logging.info(f"Stop Loss trailed. Premium: {premium}, New SL: {sl}")
                 
 
             if premium <= sl:
+                deactivate_ws(str(strike_price),'put')
                 exit_reason = 'Stoploss Hit'
-            elif time_difference > 30:
-                exit_reason = '30 candle hit'
+            #elif time_difference > 30:
+            #    exit_reason = '30 candle hit'
+            elif premium >= tgt:
+                deactivate_ws(str(strike_price),'put')
+                exit_reason = 'Target Hit'
             elif t(now.hour, now.minute) == t(15, 20):
+                deactivate_ws(str(strike_price),'put')
                 exit_reason = 'Market Close'
         
         if exit_reason:
