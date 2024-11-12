@@ -79,7 +79,7 @@ while True:
             order = 2
                 
         else:
-            print(now, 'no condition for ironfly')
+            print(now, 'no condition for ironfly (nifty)')
     if order == 2:
         entry_time = datetime.now().strftime('%H:%M:%S')
         initial_point = 0
@@ -284,11 +284,11 @@ while True:
             initial_combined_premium = (premium3 + premium4) - (premium1 + premium2)
             SL = -(0.1*initial_combined_premium)
             tsl = initial_combined_premium - SL
-            print(now, 'iron_fly created')
+            print(now, 'iron_fly created (nifty)')
             order = 1
                 
         else:
-            print('premium not mtached...')
+            print('premium not mtached...(nifty)')
             
             
             
@@ -384,7 +384,7 @@ while True:
                 
         cmp_combined_premium = (leg3_cmp + leg4_cmp) - (leg1_cmp + leg2_cmp)
             
-        print('pnl is:', cmp_combined_premium - initial_combined_premium)
+        print('pnl is:', cmp_combined_premium - initial_combined_premium,'(nifty)')
         
         if (cmp_combined_premium - initial_combined_premium) > initial_point :
             initial_point = (cmp_combined_premium - initial_combined_premium)
@@ -407,8 +407,8 @@ while True:
                 with open(csv_file, 'a', newline='') as file:
                     writer = csv.writer(file)
                     writer.writerow([today, entry_time, atm_strike, closest_strike_ce, closest_strike_pe, initial_combined_premium, exit_time, exit_premium, pnl])  
-            print('all positions closed, pnl is:', pnl)
+            print('all positions closed, pnl is:', pnl,'(nifty)')
         else:
-            print(now, 'no exit')
+            print(now, 'no exit (nifty)')
             
         
