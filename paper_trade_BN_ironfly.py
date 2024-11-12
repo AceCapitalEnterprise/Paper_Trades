@@ -77,7 +77,7 @@ while True:
             order = 2
                 
         else:
-            print(now, 'no condition for ironfly')
+            print(now, 'no condition for ironfly (banknifty)')
                 
     if order == 2:
         time.sleep(10)
@@ -202,9 +202,9 @@ while True:
             initial_combined_premium = (premium3 + premium4) - (premium1 + premium2)
             tsl = initial_combined_premium - 30
             time.sleep(5)
-            print(now, 'iron_fly created')                
+            print(now, 'iron_fly created (banknifty)')                
         else:
-            print('premium not mtached...')
+            print('premium not mtached... (banknifty)')
             
         
             
@@ -306,7 +306,7 @@ while True:
             
         cmp_combined_premium = (leg3_cmp + leg4_cmp) - (leg1_cmp + leg2_cmp)
             
-        print('pnl is:', cmp_combined_premium - initial_combined_premium)
+        print('pnl is:', cmp_combined_premium - initial_combined_premium,'(banknifty)')
         
         if (cmp_combined_premium - initial_combined_premium) > initial_point :
             initial_point = (cmp_combined_premium - initial_combined_premium)
@@ -332,8 +332,8 @@ while True:
                     writer = csv.writer(file)
                     writer.writerow([today, entry_time, atm_strike, otm_ce, otm_pe, initial_combined_premium, exit_time, exit_premium, pnl, 'BANKNIFTY'])
                 
-            print('all positions closed, pnl is:', pnl)
+            print('all positions closed, pnl is:', pnl,'(banknifty)')
         else:
-            print(now, 'no exit')
+            print(now, 'no exit (banknifty)')
             
         
