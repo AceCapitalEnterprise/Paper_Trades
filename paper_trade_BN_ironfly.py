@@ -107,7 +107,7 @@ while True:
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
                                                                 right="call",
                                                                 strike_price=atm_strike)
-                if 'Success' in leg1:
+                if leg1['Success']==200:
                     leg1 = leg1['Success']
                     leg1 = pd.DataFrame(leg1)
                     premium1 = float(leg1['ltp'][0]) 
@@ -131,7 +131,7 @@ while True:
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
                                                                 right="put",
                                                                 strike_price=atm_strike)
-                if 'Success' in leg2:
+                if leg2['Success']==200:
                     leg2 = leg2['Success']
                     leg2 = pd.DataFrame(leg2)
                     premium2 = float(leg2['ltp'][0])
@@ -159,7 +159,7 @@ while True:
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
                                                                 right="put",
                                                                 strike_price=otm_pe)
-                    if 'Success' in leg3:
+                    if leg3['Success']==200:
                         leg3 = leg3['Success']
                         leg3 = pd.DataFrame(leg3)
                         premium3 = float(leg3['ltp'])
@@ -183,7 +183,7 @@ while True:
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
                                                                 right="call",
                                                                 strike_price=otm_ce)
-                    if 'Success' in leg4:
+                    if leg4['Success']==200:
                         leg4 = leg4['Success']
                         leg4 = pd.DataFrame(leg4)
                         premium4 = float(leg4['ltp'])    
@@ -220,7 +220,7 @@ while True:
                                                             expiry_date=f'{expiry}T06:00:00.000Z',
                                                             right="call",
                                                             strike_price=atm_strike)
-                if 'Success' in leg1:
+                if leg1['Success']==200:
                     leg1 = leg1['Success']
                     leg1 = pd.DataFrame(leg1)
                     leg1_cmp = float(leg1['ltp'])
@@ -243,7 +243,7 @@ while True:
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
                                                                 right="put",
                                                                 strike_price=atm_strike)
-                if 'Success' in leg2:
+                if leg2['Success']==200:
                     leg2 = leg2['Success']
                     leg2 = pd.DataFrame(leg2)
                     leg2_cmp = float(leg2['ltp'])
@@ -267,7 +267,7 @@ while True:
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
                                                                 right="put",
                                                                 strike_price=otm_pe)
-                if 'Success' in leg3:
+                if leg3['Success']==200:
                     leg3 = leg3['Success']
                     leg3 = pd.DataFrame(leg3)
                     leg3_cmp = float(leg3['ltp'])
@@ -289,7 +289,7 @@ while True:
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
                                                                 right="call",
                                                                 strike_price=otm_ce)
-                if 'Success' in leg4:
+                if leg4['Success']==200:
                     leg4 = leg4['Success']
                     leg4 = pd.DataFrame(leg4)
                     leg4_cmp = float(leg4['ltp'])
