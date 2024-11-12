@@ -69,7 +69,7 @@ while True:
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
                                                                 right="call",
                                                                 strike_price=atm)
-                        if 'Success' in leg:
+                        if leg['Status']==200:
                             leg = leg['Success']
                             leg = pd.DataFrame(leg)
                             buy_price = float(leg['ltp'][0])
@@ -97,7 +97,7 @@ while True:
                                                                 right="put",
                                                                 strike_price=atm)
                         
-                        if 'Success' in leg:
+                        if leg['Status']==200:
                             leg = leg['Success']
                             leg = pd.DataFrame(leg)
                             buy_pe_price = float(leg['ltp'][0])
@@ -127,7 +127,7 @@ while True:
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
                                                                 right="call",
                                                                 strike_price=atm)
-                        if 'Success' in leg:
+                        if leg['Status']==200:
                             leg = leg['Success']
                             leg = pd.DataFrame(leg)
                             sell_price = float(leg['ltp'][0])
@@ -169,7 +169,7 @@ while True:
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
                                                                 right="put",
                                                                 strike_price=atm)
-                        if 'Success' in leg:
+                        if leg['Status']==200:
                             leg = leg['Success']
                             leg = pd.DataFrame(leg)
                             sell_pe_price = float(leg['ltp'][0])
