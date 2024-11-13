@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import pandas_ta as ta
 import time
+import os
 from datetime import date, datetime, timedelta, time as t
 import csv, re, time, math
 
