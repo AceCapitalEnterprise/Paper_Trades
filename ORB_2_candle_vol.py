@@ -506,6 +506,7 @@ while True:
             #logging.info(f"Updating Trailing SL at {now}")        
 
             initiate_ws(str(strike_price),'call')
+            time.sleep(4)
             premium=float(one_tick['last'])
             
             if premium >= sl + 15:
@@ -528,6 +529,7 @@ while True:
                 
         elif order == -1:
             initiate_ws(str(strike_price),'put')
+            time.sleep(3)
             premium=float(one_tick['last'])
             
             if premium >= sl + 15:
