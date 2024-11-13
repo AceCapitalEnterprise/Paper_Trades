@@ -98,7 +98,7 @@ while True:
         nifty_spot = pd.DataFrame(nifty_spot)
         nifty_spot = nifty_spot['ltp'][0]
                 
-        atm_strike = round(nifty_spot / 50) * 50
+        atm_strike = int(round(nifty_spot / 50) * 50)
         #otm_pe = atm_strike - 600
         #otm_ce = atm_strike + 600
         j=1
