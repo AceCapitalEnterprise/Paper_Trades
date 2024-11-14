@@ -13,6 +13,34 @@ import csv
 from breeze1 import *
 import logging
 
+from blaze_api import get_nifty_future_instrument_id, get_nifty_future_ohlc_with_retry, get_ltp_with_retry, get_nifty_option_instrument, get_nifty_option_ohlc_with_retry, get_order_detail, place_options_order, olhc_func 
+from breeze_connect import BreezeConnect
+import logging
+import requests
+import json
+
+exchange_segment = 2
+consumer_key = "49fc809bbcd62ed6df4f11"
+consumer_secret = "Gddv087$Hd"
+# URL for token generation
+auth_url = "https://ttblaze.iifl.com/apimarketdata/auth/login"
+
+# Request payload
+payload = {
+    "secretKey": consumer_secret,
+    "appKey": consumer_key,
+    "source": "WEBAPI"
+}
+# Send POST request for authentication
+response = requests.post(auth_url, json=payload)
+# Process response
+if response.status_code == 200:
+    data = response.json()
+    #print(data)
+    access_token = data.get("result", {}).get("token")
+    print("Access token received:", access_token)
+else:
+    print("Error:", response.text)
 # Define trading parameters
 Call_Buy = None
 Put_Buy = None
@@ -33,15 +61,13 @@ option_expiry_date = "2024-11-14"
 expiry_date = f"{fut_expiry}T07:00:00.000Z"
 option_expiry = f"{option_expiry_date}T07:00:00.000Z"
 option_tick = "14-Nov-2024"
-
-#breeze.ws_connect()
-
-#def on_ticks(ticks):
-#    print("Ticks: {}".format(ticks))
-    
-    
-#breeze.on_ticks = on_ticks
-
+option_iifl = "14Nov2024"
+series = "FUTIDX"
+symbol = "NIFTY"
+stock_code = "NIFTY"
+expiry_date_iifl = "28Nov2024" 
+start_time = datetime.now().strftime("%b %d %Y 091500")  
+end_time = datetime.now().strftime("%b %d %Y 153000") 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, filename='Orb_paper_without_tgt_debug.log', filemode='w',
                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -143,22 +169,17 @@ def get_order_detail_with_retry(exchange_code, order_id):
 last_row=None
 one_tick=None
 
-breeze.ws_connect()
-
 def on_ticks(ticks):
     global one_tick
     one_tick=ticks
 
-
-breeze.on_ticks = on_ticks
-
-def initiate_ws(strike_price,right=''):
+def initiate_ws(strike_price,right):
     if right=='call':    
         breeze.subscribe_feeds(exchange_code="NFO",
                             stock_code="NIFTY",
                             product_type="options",
                             expiry_date=option_tick,
-                            right="call",
+                            right=right,
                             strike_price=strike_price,
                             get_exchange_quotes=True,
                             get_market_depth=False)
@@ -167,7 +188,7 @@ def initiate_ws(strike_price,right=''):
                             stock_code="NIFTY",
                             product_type="options",
                             expiry_date=option_tick,
-                            right="put",
+                            right=right,
                             strike_price=strike_price,
                             get_exchange_quotes=True,
                             get_market_depth=False)
@@ -242,16 +263,12 @@ while True:
         print(f"Checking ORB conditions at {now}")
         logging.info(f"Checking ORB conditions at {now}")
         
-        olhc = get_historical_data_with_retry(interval="1minute",
-                                      from_date=f"{today}T09:15:00.000Z",
-                                      to_date=f"{today}T15:30:00.000Z",
-                                      stock_code="NIFTY",
-                                      exchange_code="NFO",
-                                      product_type="futures",
-                                      expiry_date=expiry_date,
-                                      right="others")
+        exchange_instrument_id = get_nifty_future_instrument_id(access_token, expiry_date)
+
+        # Fetch OHLC data
+        ohlc_data = get_nifty_future_ohlc_with_retry(access_token, exchange_instrument_id, start_time, end_time)        
+        olhc = olhc_func(ohlc_data)
         
-        olhc = pd.DataFrame(olhc['Success'])
         first_row = olhc.iloc[0]
         last_row = olhc.iloc[-1]
         
@@ -334,15 +351,12 @@ while True:
         print(f"Checking Volume-Based Re-entry at {now}")
         logging.info(f"Checking Volume-Based Re-entry at {now}")       
         # Fetch updated OHLC data
-        vol_hist = get_historical_data_with_retry(interval="1minute",
-                                      from_date=f"{today}T09:15:00.000Z",
-                                      to_date=f"{today}T15:30:00.000Z",
-                                      stock_code="NIFTY",
-                                      exchange_code="NFO",
-                                      product_type="futures",
-                                      expiry_date=expiry_date,
-                                      right="others")
-        olhc = pd.DataFrame(vol_hist['Success'])
+        exchange_instrument_id = get_nifty_future_instrument_id(access_token, expiry_date_iifl)
+
+        # Fetch OHLC data
+        ohlc_data = get_nifty_future_ohlc_with_retry(access_token, exchange_instrument_id, start_time, end_time)        
+        olhc = olhc_func(ohlc_data)
+        
         avg_volume = olhc['volume'].ewm(span=10, min_periods=10).mean().iloc[-2]  # Use second last row for previous candle's EMA
         last_row = olhc.iloc[-2]  # Last completed candle
         factor = get_volume_factor(last_row['volume'], avg_volume)
@@ -359,15 +373,11 @@ while True:
             while candle_count < 10:
                 time.sleep(1)
                 current_time = datetime.now()
-                olhc = breeze.get_historical_data_v2(interval="1minute",
-                                                    from_date= f"{today}T09:15:00.000Z",
-                                                    to_date= f"{today}T15:30:00.000Z",
-                                                    stock_code="NIFTY",
-                                                    exchange_code="NFO",
-                                                    product_type="futures",
-                                                    expiry_date = expiry_date,
-                                                    right="others")
-                olhc = pd.DataFrame(olhc['Success'])
+                exchange_instrument_id = get_nifty_future_instrument_id(access_token, expiry_date_iifl)
+
+                # Fetch OHLC data
+                ohlc_data = get_nifty_future_ohlc_with_retry(access_token, exchange_instrument_id, start_time, end_time)        
+                olhc = olhc_func(ohlc_data)
                 latest_candle = olhc.iloc[-1]
 
                 # Check if breakout conditions are met
@@ -429,15 +439,11 @@ while True:
             while candle_count < 10:
                 time.sleep(1)
                 current_time = datetime.now()
-                olhc = breeze.get_historical_data_v2(interval="1minute",
-                                                    from_date= f"{today}T09:15:00.000Z",
-                                                    to_date= f"{today}T15:30:00.000Z",
-                                                    stock_code="NIFTY",
-                                                    exchange_code="NFO",
-                                                    product_type="futures",
-                                                    expiry_date = expiry_date,
-                                                    right="others")
-                olhc = pd.DataFrame(olhc['Success'])
+                exchange_instrument_id = get_nifty_future_instrument_id(access_token, expiry_date_iifl)
+
+                # Fetch OHLC data
+                ohlc_data = get_nifty_future_ohlc_with_retry(access_token, exchange_instrument_id, start_time, end_time)        
+                olhc = olhc_func(ohlc_data)
                 latest_candle = olhc.iloc[-1]
 
                 # Check if breakout conditions are met
@@ -459,8 +465,8 @@ while True:
                     tgt = Call_Buy + target
                     sl = Call_Buy - stoploss
                     order = 1
-                    entry_time = datetime.strptime(entry_time, '%H:%M:%S')
-                    entry_time = current_time.replace(hour=entry_time.hour, minute=entry_time.minute, second=entry_time.second, microsecond=0)
+                    breeze.ws_connect() 
+                    
                     print(f"{now} Volume-Based call Buy at: {Call_Buy}, strike_price: {strike_price}, Target: {tgt}, Stoploss: {sl}")
                     logging.info(f"{now} Volume-Based Call Buy at: {Call_Buy}, strike_price: {strike_price}, Target: {tgt}, Stoploss: {sl}")
                     break
@@ -484,8 +490,8 @@ while True:
                     tgt = Put_Buy + target
                     sl = Put_Buy - stoploss
                     order = -1
-                    entry_time = datetime.strptime(entry_time, '%H:%M:%S')
-                    entry_time = current_time.replace(hour=entry_time.hour, minute=entry_time.minute, second=entry_time.second, microsecond=0)
+                    breeze.ws_connect() 
+                    
                     print(f"{now} Volume-Based Put Buy at: {Put_Buy}, strike_price: {strike_price}, Target: {tgt}, Stoploss: {sl}")
                     logging.info(f"{now} Volume-Based Put Buy at: {Put_Buy}, strike_price: {strike_price}, Target: {tgt}, Stoploss: {sl}")
                     break
@@ -499,16 +505,17 @@ while True:
         time.sleep(1)
         current_time = datetime.now()
     
-        time_difference = (current_time - entry_time).total_seconds() / 60
+        #time_difference = (current_time - entry_time).total_seconds() / 60
         #print(time_difference)
         exit_reason = ''
+           
+        breeze.on_ticks = on_ticks
         if order == 1: 
             #logging.info(f"Updating Trailing SL at {now}")        
-
+            print(strike_price)
             initiate_ws(str(strike_price),'call')
-            time.sleep(4)
             premium=float(one_tick['last'])
-            
+            print(one_tick)
             if premium >= sl + 15:
                 sl = adjust_trailing_sl(premium, sl, order)
                 print(f"Stop Loss trailed. Premium: {premium}, New SL: {sl}")
@@ -526,18 +533,18 @@ while True:
             elif t(now.hour, now.minute) == t(15, 20):
                 deactivate_ws(strike_price,'call')
                 exit_reason = 'Market Close'
-                
-        elif order == -1:
-            initiate_ws(str(strike_price),'put')
-            time.sleep(3)
-            premium=float(one_tick['last'])
+            breeze.ws_disconnect()
             
+        elif order == -1:
+            print(strike_price)
+            initiate_ws(str(strike_price),'put')
+            premium=float(one_tick['last'])
+            print(one_tick)
             if premium >= sl + 15:
                 sl = adjust_trailing_sl(premium, sl, order)
                 print(f"Stop Loss trailed. Premium: {premium}, New SL: {sl}")
                 logging.info(f"Stop Loss trailed. Premium: {premium}, New SL: {sl}")
                 
-
             if premium <= sl:
                 deactivate_ws(str(strike_price),'put')
                 exit_reason = 'Stoploss Hit'
@@ -549,7 +556,8 @@ while True:
             elif t(now.hour, now.minute) == t(15, 20):
                 deactivate_ws(str(strike_price),'put')
                 exit_reason = 'Market Close'
-        
+            breeze.ws_disconnect()
+            
         if exit_reason:
             print(f"{exit_reason}. Exiting position.")
             logging.info(f"{exit_reason}. Exiting position.")
