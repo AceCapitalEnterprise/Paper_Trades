@@ -136,3 +136,28 @@ def place_options_order(interactive_access_token, exchange_instrument_id, quanti
         return response.json()['result']['AppOrderID']
     else:
         print(f"Error: {response.status_code}", response.text)
+
+
+def olhc_func(ohlc_data):
+    candle_data = ohlc_data['result']['dataReponse'].split(',')
+    
+    # Prepare list to store each candle's OHLC data
+    ohlc_list = []
+    
+    # Loop through each entry and split the candle components
+    for candle in candle_data:
+        components = candle.split('|')
+        print(components)
+        timestamp = int(components[0])  # Assuming timestamp is in epoch format
+        open_price = float(components[1])
+        high_price = float(components[2])
+        low_price = float(components[3])
+        close_price = float(components[4])
+        volume = int(components[5])
+        
+        # Append to the list
+        ohlc_list.append([timestamp, open_price, high_price, low_price, close_price, volume])
+
+    ohlc_df = pd.DataFrame(ohlc_list, columns=['Timestamp', 'open', 'high', 'low', 'close', 'volume'])
+    ohlc_df['Timestamp'] = pd.to_datetime(ohlc_df['Timestamp'], unit='s')    
+    return ohlc_df
