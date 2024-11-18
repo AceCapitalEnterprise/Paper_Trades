@@ -40,7 +40,7 @@ order = 0
 quantity="250"
 today = datetime.now().strftime("%Y-%m-%d")
 fut_expiry  = "2024-11-28"
-option_expiry_date = "2024-11-14"
+option_expiry_date = "2024-11-21"
 expiry_date = f"{fut_expiry}T07:00:00.000Z"
 option_expiry = f"{option_expiry_date}T07:00:00.000Z"
 
