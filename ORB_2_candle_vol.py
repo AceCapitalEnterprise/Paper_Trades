@@ -539,7 +539,7 @@ while True:
         elif order == -1:
             print(strike_price)
             initiate_ws(str(strike_price),'put')
-            time.sleep(2)
+            time.sleep(4)
             premium=float(one_tick['last'])
             print(one_tick)
             if premium >= sl + 15:
