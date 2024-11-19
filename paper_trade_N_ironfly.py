@@ -26,6 +26,30 @@ fut_expiry = '2024-11-28'
 order = 0
 trades = 0
 
+def leg_data(stock_code,exchange_code,product_type,right,strike_price):
+    j=1
+    for i in range(j):
+        try:
+            leg = breeze.get_option_chain_quotes(stock_code=stock_code,
+                                                        exchange_code=exchange_code,
+                                                        product_type=product_type,
+                                                        expiry_date=f'{expiry}T06:00:00.000Z',
+                                                        right=right,
+                                                        strike_price=strike_price)
+            if leg['Status']==200:
+                return leg['Success']
+                break
+            else:
+                j+=1
+                time.sleep(3)
+        except:
+            j+=1
+            time.sleep(5)
+
+
+
+
+
 while True:
     now = datetime.now()
     if order == 0 and time_1 < t(datetime.now().time().hour, datetime.now().time().minute) < time_2 and now.second == 0 and now.minute % 5 == 0:
@@ -79,21 +103,19 @@ while True:
             order = 2
                 
         else:
-            print(now, 'no condition for ironfly (nifty)')
+            print(now, 'no condition for ironfly')
     if order == 2:
         entry_time = datetime.now().strftime('%H:%M:%S')
         initial_point = 0
         SL = 0
         time.sleep(20)
-        try:        
-            nifty_spot = breeze.get_quotes(stock_code="NIFTY",
-                                                   exchange_code="NSE",
-                                                   product_type="cash",
-                                                   right="others",
-                                                   strike_price="0")
+                
+        nifty_spot = breeze.get_quotes(stock_code="NIFTY",
+                                               exchange_code="NSE",
+                                               product_type="cash",
+                                               right="others",
+                                               strike_price="0")
 
-        except Exception as e:
-            print(traceback.print_exc(),"   ",e)
         nifty_spot = nifty_spot['Success']
         nifty_spot = pd.DataFrame(nifty_spot)
         nifty_spot = nifty_spot['ltp'][0]
@@ -101,85 +123,55 @@ while True:
         atm_strike = int(round(nifty_spot / 50) * 50)
         #otm_pe = atm_strike - 600
         #otm_ce = atm_strike + 600
-        j=1
-        for i in range(j):
-            try:
-                leg1 = breeze.get_option_chain_quotes(stock_code="NIFTY",
-                                                                exchange_code="NFO",
-                                                                product_type="options",
-                                                                expiry_date=f'{expiry}T06:00:00.000Z',
-                                                                right="call",
-                                                                strike_price=atm_strike)
-                if leg1['Success']==200:
-                    leg1 = leg1['Success']
-                    leg1 = pd.DataFrame(leg1)
-                    # print("sdnsiks",leg1)
-                    premium1 = float(leg1['ltp'][0])
-                    break
-                else:
-                    j+=1
-                    
-            except:
-                j+=1
-                # print(traceback.print_exc())
-                time.sleep(5)
+        
+        # leg1 = breeze.get_option_chain_quotes(stock_code="NIFTY",
+        #                                                 exchange_code="NFO",
+        #                                                 product_type="options",
+        #                                                 expiry_date=f'{expiry}T06:00:00.000Z',
+        #                                                 right="call",
+                                                        # strike_price=atm_strike)
+        leg1=leg_data(stock_code="NIFTY",exchange_code="NFO",product_type="options",right="call",strike_price=atm_strike)
+        # leg1 = leg1['Success']
+        leg1 = pd.DataFrame(leg1)
+        premium1 = float(leg1['ltp'][0])   
                 
-        j=1
-        for i in range(j):
-            try:
-                leg2 = breeze.get_option_chain_quotes(stock_code="NIFTY",
-                                                                exchange_code="NFO",
-                                                                product_type="options",
-                                                                expiry_date=f'{expiry}T06:00:00.000Z',
-                                                                right="put",
-                                                                strike_price=atm_strike)
-                if leg2['Success']==200:
-                    leg2 = leg2['Success']
-                    leg2 = pd.DataFrame(leg2)
-                    premium2 = float(leg2['ltp'][0])     
-                    premium_match = 0.10*premium1
-                    break
-                else:
-                    j+=1
-            except:
-                j+=1
-                # print(traceback.print_exc())
-                time.sleep(5)
 
+                
+        # leg2 = breeze.get_option_chain_quotes(stock_code="NIFTY",
+        #                                                 exchange_code="NFO",
+        #                                                 product_type="options",
+        #                                                 expiry_date=f'{expiry}T06:00:00.000Z',
+        #                                                 right="put",
+        #                                                 strike_price=atm_strike)
+        # leg2 = leg2['Success']
+        leg2 = leg_data(stock_code="NIFTY",exchange_code="NFO",product_type="options",right="put",strike_price=atm_strike)
+        leg2 = pd.DataFrame(leg2)
+        premium2 = float(leg2['ltp'][0])
+        
+                
+        premium_match = 0.10*premium1
         if ((premium1+premium_match) > premium2) and (premium2 > (premium1-premium_match)):
+            order = 1
             hedge_value = 0.1* (premium1+premium2)
             hedge_value = hedge_value / 2
             
             strikes = [atm_strike+50, atm_strike+100, atm_strike+150, atm_strike+200, atm_strike+250, atm_strike+300, atm_strike+350, atm_strike+400, atm_strike+450, atm_strike+500, atm_strike+550, atm_strike+600, atm_strike+650, atm_strike+700, atm_strike+750, atm_strike+800, atm_strike+850, atm_strike+900, atm_strike+950, atm_strike+1000, atm_strike+1050, atm_strike+1100]
             
             ltps = []
-            
-            
+
+
             for strike in strikes:
-                j=1
-                for i in range(j):
-                    try:
-                        leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
-                                                                exchange_code="NFO",
-                                                                product_type="options",
-                                                                expiry_date=f'{expiry}T06:00:00.000Z',
-                                                                right="call",
-                                                                strike_price=strike)
-                        if leg['Success']==200:
-            
-                            leg_df = leg['Success']
-                            leg_df = pd.DataFrame(leg_df)
-                            ltp_value = float(leg_df['ltp'])
-                            break    
-                        # ltpsput.append({'strike_price': strike, 'ltp': ltp_value})
-                        else:
-                            j+=1
-                    
-                    except Exception as e:
-                        j+=1
-                        # print(e)
-                        # print(traceback.print_exc())
-                        time.sleep(5)
+                # leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
+                #                                         exchange_code="NFO",
+                #                                         product_type="options",
+                #                                         expiry_date=f'{expiry}T06:00:00.000Z',
+                #                                         right="call",
+                #                                         strike_price=strike)
+    
+                # leg_df = leg['Success']
+                leg_df = leg_data(stock_code="NIFTY",exchange_code="NFO",product_type="options",right="call",strike_price=strike)
+                leg_df = pd.DataFrame(leg_df)
+                ltp_value = float(leg_df['ltp'])
                 ltps.append({'strike_price': strike, 'ltp': ltp_value})
                     
 
@@ -194,25 +186,19 @@ while True:
                     min_diff = diff
                     closest_strike_ce = ltp_data['strike_price']
                     
-            j=1
-            for i in range(j):
-                try:
-                    leg4 = breeze.get_option_chain_quotes(stock_code="NIFTY",
-                                                            exchange_code="NFO",
-                                                            product_type="options",
-                                                            expiry_date=f'{expiry}T06:00:00.000Z',
-                                                            right="call",
-                                                            strike_price=closest_strike_ce)
-                    if leg4['Success']==200:
-                        leg4 = leg4['Success']
-                        leg4 = pd.DataFrame(leg4)
-                        premium4 = float(leg4['ltp'])
-                    else:
-                        j+=1
-                except Exception as e:
-                    # print(traceback.print_exc())
-                    j+=1
-                    time.sleep(5)
+                
+                
+            # leg4 = breeze.get_option_chain_quotes(stock_code="NIFTY",
+            #                                             exchange_code="NFO",
+            #                                             product_type="options",
+            #                                             expiry_date=f'{expiry}T06:00:00.000Z',
+            #                                             right="call",
+            #                                             strike_price=closest_strike_ce)
+            # leg4 = leg4['Success']
+            leg4 = leg_data(stock_code="NIFTY",exchange_code="NFO",product_type="options",right="call",strike_price=closest_strike_ce)
+            leg4 = pd.DataFrame(leg4)
+            premium4 = float(leg4['ltp'])
+            
             
             strikes = [atm_strike-50, atm_strike-100, atm_strike-150, atm_strike-200, atm_strike-250, atm_strike-300, atm_strike-350, atm_strike-400, atm_strike-450, atm_strike-500, atm_strike-550, atm_strike-600, atm_strike-650, atm_strike-700, atm_strike-750, atm_strike-800, atm_strike-850, atm_strike-900, atm_strike-950, atm_strike-1000, atm_strike-1050, atm_strike-1100]
             
@@ -220,30 +206,17 @@ while True:
 
 
             for strike in strikes:
-                j=1
-                for i in range(j):
-                    try:
-                        leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
-                                                                exchange_code="NFO",
-                                                                product_type="options",
-                                                                expiry_date=f'{expiry}T06:00:00.000Z',
-                                                                right="put",
-                                                                strike_price=strike)
-                        if leg['Success']==200:
-            
-                            leg_df = leg['Success']
-                            leg_df = pd.DataFrame(leg_df)
-                            ltp_value = float(leg_df['ltp'])
-                            break    
-                        # ltpsput.append({'strike_price': strike, 'ltp': ltp_value})
-                        else:
-                            j+=1
-                    
-                    except Exception as e:
-                        j+=1
-                        # print(e)
-                        # print(traceback.print_exc())
-                        time.sleep(5)
+                # leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
+                #                                         exchange_code="NFO",
+                #                                         product_type="options",
+                #                                         expiry_date=f'{expiry}T06:00:00.000Z',
+                #                                         right="put",
+                #                                         strike_price=strike)
+    
+                # leg_df = leg['Success']
+                leg_df = leg_data(stock_code="NIFTY",exchange_code="NFO",product_type="options",right="put",strike_price=strike)
+                leg_df = pd.DataFrame(leg_df)
+                ltp_value = float(leg_df['ltp'])
                 ltpsput.append({'strike_price': strike, 'ltp': ltp_value})
                     
 
@@ -258,133 +231,79 @@ while True:
                     min_diff = diff
                     closest_strike_pe = ltp_data['strike_price']
                     
-            j=1
-            for i in range(j):    
-                try:
-                    leg3 = breeze.get_option_chain_quotes(stock_code="NIFTY",
-                                                                    exchange_code="NFO",
-                                                                    product_type="options",
-                                                                    expiry_date=f'{expiry}T06:00:00.000Z',
-                                                                    right="put",
-                                                                    strike_price=closest_strike_pe)
-                    if leg4['Success']==200:
-                        leg3 = leg3['Success']
-                        leg3 = pd.DataFrame(leg3)
-                        premium3 = float(leg3['ltp'])
-                        break
-                    else:
-                        j+=1
-                except Exception as e:
-                    # print(e)
-                    # print(traceback.print_exc())
-                    j+=1
-                    time.sleep(5)
-
+                    
+                    
+            # leg3 = breeze.get_option_chain_quotes(stock_code="NIFTY",
+            #                                             exchange_code="NFO",
+            #                                             product_type="options",
+            #                                             expiry_date=f'{expiry}T06:00:00.000Z',
+            #                                             right="put",
+            #                                             strike_price=closest_strike_pe)
+            # leg3 = leg3['Success']
+            leg3 = leg_data(stock_code="NIFTY",exchange_code="NFO",product_type="options",right="put",strike_price=closest_strike_pe)
+            leg3 = pd.DataFrame(leg3)
+            premium3 = float(leg3['ltp'])
                 
             initial_combined_premium = (premium3 + premium4) - (premium1 + premium2)
             SL = -(0.1*initial_combined_premium)
             tsl = initial_combined_premium - SL
-            print(now, 'iron_fly created (nifty)')
+            print(now, 'iron_fly created')
             order = 1
                 
         else:
-            print('premium not mtached...(nifty)')
+            print('premium not mtached...')
             
             
             
     if order == 1:
         time.sleep(20)
-        j=1
-        for i in range(j):
-            try:
-                leg1 = breeze.get_option_chain_quotes(stock_code="NIFTY",
-                                                            exchange_code="NFO",
-                                                            product_type="options",
-                                                            expiry_date=f'{expiry}T06:00:00.000Z',
-                                                            right="call",
-                                                            strike_price=atm_strike)
-                if leg1['Success']==200:
-                    leg1 = leg1['Success']
-                    leg1 = pd.DataFrame(leg1)
-                    
-                    leg1_cmp = float(leg1['ltp'])
-                    break
-                else:
-                    j+=1
-            except:
-                j+=1
-                # print(traceback.print_exc())
-                time.sleep(5)
-        j=1
-        for i in range(j):
-            try:
-                leg2 = breeze.get_option_chain_quotes(stock_code="NIFTY",
-                                                            exchange_code="NFO",
-                                                            product_type="options",
-                                                            expiry_date=f'{expiry}T06:00:00.000Z',
-                                                            right="put",
-                                                            strike_price=atm_strike)
-                if leg4['Success']==200:
-                    leg2 = leg2['Success']
-                    leg2 = pd.DataFrame(leg2)
-                    leg2_cmp = float(leg2['ltp'])
-                    break
-                else:
-                    j+=1
-            except Exception as e:
-                # print(e)
-                # print(traceback.print_exc())
-                j+=1
-                time.sleep(10)
-        
-        j=1
-        for i in range(j): 
-            try:
-                leg3 = breeze.get_option_chain_quotes(stock_code="NIFTY",
-                                                            exchange_code="NFO",
-                                                            product_type="options",
-                                                            expiry_date=f'{expiry}T06:00:00.000Z',
-                                                            right="put",
-                                                            strike_price=closest_strike_pe)
-                if leg3['Success']==200:
-                    leg3 = leg3['Success']
-                    leg3 = pd.DataFrame(leg3)
-                    leg3_cmp = float(leg3['ltp'])
-                    break
-                else:
-                    j+=1
-            except Exception as e:
-            #     print(e)
-            #     print(traceback.print_exc())
-                j+=1
-                time.sleep(10)
-
-        j=1
-        for i in range(j):
-            try:
-                leg4 = breeze.get_option_chain_quotes(stock_code="NIFTY",
-                                                                exchange_code="NFO",
-                                                                product_type="options",
-                                                                expiry_date=f'{expiry}T06:00:00.000Z',
-                                                                right="call",
-                                                                strike_price=closest_strike_ce)
-                if leg4['Success']==200:
-                    leg4 = leg4['Success']
-                    leg4 = pd.DataFrame(leg4)
-                    leg4_cmp = float(leg4['ltp'])
-                    break
-                else:
-                    j+=1
-            except Exception as e:
-                # print(traceback.print_exc())
-                j+=1
-                time.sleep(5)
+        # leg1 = breeze.get_option_chain_quotes(stock_code="NIFTY",
+        #                                             exchange_code="NFO",
+        #                                             product_type="options",
+        #                                             expiry_date=f'{expiry}T06:00:00.000Z',
+        #                                             right="call",
+        #                                             strike_price=atm_strike)
+        # leg1 = leg1['Success']
+        leg1 = leg_data(stock_code="NIFTY",exchange_code="NFO",product_type="options",right="call",strike_price=atm_strike)
+        leg1 = pd.DataFrame(leg1)
+        leg1_cmp = float(leg1['ltp'])
             
-        
-                
+        # leg2 = breeze.get_option_chain_quotes(stock_code="NIFTY",
+        #                                             exchange_code="NFO",
+        #                                             product_type="options",
+        #                                             expiry_date=f'{expiry}T06:00:00.000Z',
+        #                                             right="put",
+        #                                             strike_price=atm_strike)
+        # leg2 = leg2['Success']
+        leg2 = leg_data(stock_code="NIFTY",exchange_code="NFO",product_type="options",right="put",strike_price=atm_strike)
+        leg2 = pd.DataFrame(leg2)
+        leg2_cmp = float(leg2['ltp'])
+            
+        # leg3 = breeze.get_option_chain_quotes(stock_code="NIFTY",
+        #                                             exchange_code="NFO",
+        #                                             product_type="options",
+        #                                             expiry_date=f'{expiry}T06:00:00.000Z',
+        #                                             right="put",
+        #                                             strike_price=closest_strike_pe)
+        # leg3 = leg3['Success']
+        leg3 = leg_data(stock_code="NIFTY",exchange_code="NFO",product_type="options",right="put",strike_price=closest_strike_pe)
+        leg3 = pd.DataFrame(leg3)
+        leg3_cmp = float(leg3['ltp'])
+            
+        # leg4 = breeze.get_option_chain_quotes(stock_code="NIFTY",
+        #                                             exchange_code="NFO",
+        #                                             product_type="options",
+        #                                             expiry_date=f'{expiry}T06:00:00.000Z',
+        #                                             right="call",
+        #                                             strike_price=closest_strike_ce)
+        # leg4 = leg4['Success']
+        leg4 = leg_data(stock_code="NIFTY",exchange_code="NFO",product_type="options",right="call",strike_price=closest_strike_ce)
+        leg4 = pd.DataFrame(leg4)
+        leg4_cmp = float(leg4['ltp'])
+            
         cmp_combined_premium = (leg3_cmp + leg4_cmp) - (leg1_cmp + leg2_cmp)
             
-        print('pnl is:', cmp_combined_premium - initial_combined_premium,'(nifty)')
+        print('pnl is:', cmp_combined_premium - initial_combined_premium)
         
         if (cmp_combined_premium - initial_combined_premium) > initial_point :
             initial_point = (cmp_combined_premium - initial_combined_premium)
@@ -407,8 +326,8 @@ while True:
                 with open(csv_file, 'a', newline='') as file:
                     writer = csv.writer(file)
                     writer.writerow([today, entry_time, atm_strike, closest_strike_ce, closest_strike_pe, initial_combined_premium, exit_time, exit_premium, pnl])  
-            print('all positions closed, pnl is:', pnl,'(nifty)')
+            print('all positions closed, pnl is:', pnl)
         else:
-            print(now, 'no exit (nifty)')
+            print(now, 'no exit')
             
-        
+              
