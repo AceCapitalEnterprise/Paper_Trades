@@ -41,6 +41,8 @@ if response.status_code == 200:
     print("Access token received:", access_token)
 else:
     print("Error:", response.text)
+
+breeze.ws_connect() 
 # Define trading parameters
 Call_Buy = None
 Put_Buy = None
@@ -302,6 +304,7 @@ while True:
                     order = 1
                     orb = True
                     entry_time = datetime.strptime(entry_time, '%H:%M:%S')
+                    
                     entry_time = current_time.replace(hour=entry_time.hour, minute=entry_time.minute, second=entry_time.second, microsecond=0)
                     print(f"Call Buy at: {Call_Buy}, strike_price: {strike_price}, Target: {tgt}, Stoploss: {sl}")
                     logging.info(f"Call Buy at: {Call_Buy}, strike_price: {strike_price}, Target: {tgt}, Stoploss: {sl}")
@@ -465,8 +468,8 @@ while True:
                     tgt = Call_Buy + target
                     sl = Call_Buy - stoploss
                     order = 1
-                    breeze.ws_connect() 
-                    
+
+                    initiate_ws(str(strike_price),'call')
                     print(f"{now} Volume-Based call Buy at: {Call_Buy}, strike_price: {strike_price}, Target: {tgt}, Stoploss: {sl}")
                     logging.info(f"{now} Volume-Based Call Buy at: {Call_Buy}, strike_price: {strike_price}, Target: {tgt}, Stoploss: {sl}")
                     break
@@ -490,8 +493,8 @@ while True:
                     tgt = Put_Buy + target
                     sl = Put_Buy - stoploss
                     order = -1
-                    breeze.ws_connect() 
-                    
+                    # breeze.ws_connect() 
+                    initiate_ws(str(strike_price),'put')
                     print(f"{now} Volume-Based Put Buy at: {Put_Buy}, strike_price: {strike_price}, Target: {tgt}, Stoploss: {sl}")
                     logging.info(f"{now} Volume-Based Put Buy at: {Put_Buy}, strike_price: {strike_price}, Target: {tgt}, Stoploss: {sl}")
                     break
@@ -513,8 +516,8 @@ while True:
         if order == 1: 
             #logging.info(f"Updating Trailing SL at {now}")        
             print(strike_price)
-            initiate_ws(str(strike_price),'call')
-            time.sleep(3)
+            # initiate_ws(str(strike_price),'call')
+            # time.sleep(3)
             premium=float(one_tick['last'])
             print(one_tick)
             if premium >= sl + 15:
@@ -538,8 +541,8 @@ while True:
             
         elif order == -1:
             print(strike_price)
-            initiate_ws(str(strike_price),'put')
-            time.sleep(4)
+            # initiate_ws(str(strike_price),'put')
+            # time.sleep(4)
             premium=float(one_tick['last'])
             print(one_tick)
             if premium >= sl + 15:
