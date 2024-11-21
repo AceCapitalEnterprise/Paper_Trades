@@ -175,6 +175,8 @@ def on_ticks(ticks):
     global one_tick
     one_tick=ticks
 
+breeze.on_ticks=on_ticks
+
 def initiate_ws(strike_price,right):
     if right=='call':    
         breeze.subscribe_feeds(exchange_code="NFO",
