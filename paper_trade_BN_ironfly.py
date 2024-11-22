@@ -25,6 +25,29 @@ fut_expiry = '2024-11-27'
 order = 0
 trades = 0
 
+
+def leg_data(stock_code,exchange_code,product_type,right,strike_price):
+    j=1
+    for i in range(j):
+        try:
+            leg = breeze.get_option_chain_quotes(stock_code=stock_code,
+                                                        exchange_code=exchange_code,
+                                                        product_type=product_type,
+                                                        expiry_date=f'{expiry}T06:00:00.000Z',
+                                                        right=right,
+                                                        strike_price=strike_price)
+            if leg['Status']==200:
+                # print(leg)
+                return leg['Success']
+                break
+            else:
+                j+=1
+                time.sleep(3)
+        except:
+            j+=1
+            time.sleep(5)
+
+
 while True:
     now = datetime.now()
     if order == 0 and time_1 < t(datetime.now().time().hour, datetime.now().time().minute) < time_2 and now.second == 0 and now.minute % 5 == 0:
@@ -99,24 +122,26 @@ while True:
         otm_pe = atm_strike - 600
         otm_ce = atm_strike + 600
                 
-        leg1 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
-                                                        exchange_code="NFO",
-                                                        product_type="options",
-                                                        expiry_date=f'{expiry}T06:00:00.000Z',
-                                                        right="call",
-                                                        strike_price=atm_strike)
-        leg1 = leg1['Success']
+        # leg1 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
+        #                                                 exchange_code="NFO",
+        #                                                 product_type="options",
+        #                                                 expiry_date=f'{expiry}T06:00:00.000Z',
+        #                                                 right="call",
+        #                                                 strike_price=atm_strike)
+        # leg1 = leg1['Success']
+        leg1 = leg_data(stock_code="CNXBAN",exchange_code="NFO",product_type="options",right="call",strike_price=atm_strike)
         leg1 = pd.DataFrame(leg1)
         premium1 = float(leg1['ltp'][0])   
         
         
-        leg2 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
-                                                        exchange_code="NFO",
-                                                        product_type="options",
-                                                        expiry_date=f'{expiry}T06:00:00.000Z',
-                                                        right="put",
-                                                        strike_price=atm_strike)
-        leg2 = leg2['Success']
+        # leg2 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
+        #                                                 exchange_code="NFO",
+        #                                                 product_type="options",
+        #                                                 expiry_date=f'{expiry}T06:00:00.000Z',
+        #                                                 right="put",
+        #                                                 strike_price=atm_strike)
+        # leg2 = leg2['Success']
+        leg2 = leg_data(stock_code="CNXBAN",exchange_code="NFO",product_type="options",right="put",strike_price=atm_strike)
         leg2 = pd.DataFrame(leg2)
         premium2 = float(leg2['ltp'][0])
         
@@ -125,25 +150,27 @@ while True:
             time.sleep(2)
             order=1
                 
-            leg3 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
-                                                        exchange_code="NFO",
-                                                        product_type="options",
-                                                        expiry_date=f'{expiry}T06:00:00.000Z',
-                                                        right="put",
-                                                        strike_price=otm_pe)
-            leg3 = leg3['Success']
+            # leg3 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
+            #                                             exchange_code="NFO",
+            #                                             product_type="options",
+            #                                             expiry_date=f'{expiry}T06:00:00.000Z',
+            #                                             right="put",
+            #                                             strike_price=otm_pe)
+            # leg3 = leg3['Success']
+            leg3 = leg_data(stock_code="CNXBAN",exchange_code="NFO",product_type="options",right="put",strike_price=otm_pe)
             leg3 = pd.DataFrame(leg3)
             premium3 = float(leg3['ltp'])
                     
                 
                 
-            leg4 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
-                                                        exchange_code="NFO",
-                                                        product_type="options",
-                                                        expiry_date=f'{expiry}T06:00:00.000Z',
-                                                        right="call",
-                                                        strike_price=otm_ce)
-            leg4 = leg4['Success']
+            # leg4 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
+            #                                             exchange_code="NFO",
+            #                                             product_type="options",
+            #                                             expiry_date=f'{expiry}T06:00:00.000Z',
+            #                                             right="call",
+            #                                             strike_price=otm_ce)
+            # leg4 = leg4['Success']
+            leg4 = leg_data(stock_code="CNXBAN",exchange_code="NFO",product_type="options",right="call",strike_price=otm_ce)
             leg4 = pd.DataFrame(leg4)
             premium4 = float(leg4['ltp'])    
                 
@@ -160,43 +187,47 @@ while True:
             
     if order == 1:
         time.sleep(20)
-        leg1 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
-                                                    exchange_code="NFO",
-                                                    product_type="options",
-                                                    expiry_date=f'{expiry}T06:00:00.000Z',
-                                                    right="call",
-                                                    strike_price=atm_strike)
-        leg1 = leg1['Success']
+        # leg1 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
+        #                                             exchange_code="NFO",
+        #                                             product_type="options",
+        #                                             expiry_date=f'{expiry}T06:00:00.000Z',
+        #                                             right="call",
+        #                                             strike_price=atm_strike)
+        # leg1 = leg1['Success']
+        leg1=leg_data(stock_code="CNXBAN",exchange_code="NFO",product_type="options",right="call",strike_price=atm_strike)
         leg1 = pd.DataFrame(leg1)
         leg1_cmp = float(leg1['ltp'])
             
-        leg2 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
-                                                    exchange_code="NFO",
-                                                    product_type="options",
-                                                    expiry_date=f'{expiry}T06:00:00.000Z',
-                                                    right="put",
-                                                    strike_price=atm_strike)
-        leg2 = leg2['Success']
+        # leg2 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
+        #                                             exchange_code="NFO",
+        #                                             product_type="options",
+        #                                             expiry_date=f'{expiry}T06:00:00.000Z',
+        #                                             right="put",
+        #                                             strike_price=atm_strike)
+        # leg2 = leg2['Success']
+        leg2 = leg_data(stock_code="CNXBAN",exchange_code="NFO",product_type="options",right="put",strike_price=atm_strike)
         leg2 = pd.DataFrame(leg2)
         leg2_cmp = float(leg2['ltp'])
             
-        leg3 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
-                                                    exchange_code="NFO",
-                                                    product_type="options",
-                                                    expiry_date=f'{expiry}T06:00:00.000Z',
-                                                    right="put",
-                                                    strike_price=otm_pe)
-        leg3 = leg3['Success']
+        # leg3 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
+        #                                             exchange_code="NFO",
+        #                                             product_type="options",
+        #                                             expiry_date=f'{expiry}T06:00:00.000Z',
+        #                                             right="put",
+        #                                             strike_price=otm_pe)
+        # leg3 = leg3['Success']
+        leg3= leg_data(stock_code="CNXBAN",exchange_code="NFO",product_type="options",right="put",strike_price=otm_pe)
         leg3 = pd.DataFrame(leg3)
         leg3_cmp = float(leg3['ltp'])
             
-        leg4 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
-                                                    exchange_code="NFO",
-                                                    product_type="options",
-                                                    expiry_date=f'{expiry}T06:00:00.000Z',
-                                                    right="call",
-                                                    strike_price=otm_ce)
-        leg4 = leg4['Success']
+        # leg4 = breeze.get_option_chain_quotes(stock_code="CNXBAN",
+        #                                             exchange_code="NFO",
+        #                                             product_type="options",
+        #                                             expiry_date=f'{expiry}T06:00:00.000Z',
+        #                                             right="call",
+        #                                             strike_price=otm_ce)
+        # leg4 = leg4['Success']
+        leg4 = leg_data(stock_code="CNXBAN",exchange_code="NFO",product_type="options",right="call",strike_price=otm_ce)
         leg4 = pd.DataFrame(leg4)
         leg4_cmp = float(leg4['ltp'])
             
