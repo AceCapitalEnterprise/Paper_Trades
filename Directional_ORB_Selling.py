@@ -583,9 +583,9 @@ while True:
             path="unclosed_positions_directional.csv"
             # if os.path.exists(path):
 
-            #     positions_df.to_csv(csv_file,header=False,mode='a',index=False)
+            #     positions_df.to_csv(path,header=False,mode='a',index=False)
             # else:
-            positions_df.to_csv(csv_file,header=True,index=False)
+            positions_df.to_csv(path,header=True,index=False)
             print("All open Positions Saved and Market closed")
             quit()
         print(now)        
