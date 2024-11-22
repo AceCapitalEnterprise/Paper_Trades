@@ -18,12 +18,18 @@ warnings.filterwarnings("ignore")
 time_1 = t(9, 30)
 time_2 = t(15, 30)
 order = 0
-expiry = '2024-11-21'
+expiry = '2024-11-28'
 fut_expiry = '2024-11-28'
 
 SL = 5
-positions = []
-positions_df = pd.DataFrame(columns=['datetime', 'action', 'strike', 'premium', 'trailing_sl'])
+path="unclosed_positions_directional.csv"
+if os.path.exists(path):
+    positions_df=pd.read_csv(path)
+else:
+    positions = []
+    positions_df = pd.DataFrame(columns=['datetime', 'action', 'strike', 'premium', 'trailing_sl'])
+# positions = []
+# positions_df = pd.DataFrame(columns=['datetime', 'action', 'strike', 'premium', 'trailing_sl'])
 
 def get_current_market_price(CE_or_PE, strike_price):
     global current_price
@@ -572,6 +578,15 @@ while True:
         import time
         positions_df = update_trailing_sl(positions_df)
         positions_df = check_profit_target_and_add_position(positions_df)
+        if now.time() >= t(15, 20):
+            path="unclosed_positions_directional.csv"
+            # if os.path.exists(path):
+
+            #     positions_df.to_csv(csv_file,header=False,mode='a',index=False)
+            # else:
+            positions_df.to_csv(csv_file,header=True,index=False)
+            print("All open Positions Saved and Market closed")
+            quit()
         print(now)        
         time.sleep(20)
 
