@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, date, timedelta, time as t
 import csv, re, time, math
-import time
+import time as time_
 import os
 
 import warnings
@@ -20,6 +20,7 @@ time_1 = t(9, 30)
 time_2 = t(15, 30)
 order = 0
 expiry = '2024-11-28'
+expiry1 = '28-Nov-2024'
 fut_expiry = '2024-11-28'
 
 SL = 5
@@ -29,47 +30,64 @@ if os.path.exists(path):
 else:
     positions = []
     positions_df = pd.DataFrame(columns=['datetime', 'action', 'strike', 'premium', 'trailing_sl'])
-# positions = []
-# positions_df = pd.DataFrame(columns=['datetime', 'action', 'strike', 'premium', 'trailing_sl'])
+
+one_tick=None
+
+breeze.ws_connect()
+
+
+def on_ticks(ticks):
+    global one_tick
+
+    one_tick=ticks
+
+def initiate_ws(CE_or_PE, strike_price):
+    leg = breeze.subscribe_feeds(exchange_code="NFO",
+                                stock_code="NIFTY",
+                                product_type="options",
+                                expiry_date=expiry1,
+                                right=CE_or_PE,
+                                strike_price=str(strike_price),
+                                get_exchange_quotes=True,
+                                get_market_depth=False)
+    # time.sleep(2)
+
+
+def deactivate_ws(CE_or_PE,strike_price):
+    breeze.unsubscribe_feeds(exchange_code="NFO",
+                                 stock_code="NIFTY",
+                                 product_type="options",
+                                 expiry_date=expiry1,
+                                 right=CE_or_PE,
+                                 strike_price=str(strike_price),
+                                 get_exchange_quotes=True,
+                                 get_market_depth=False)
+
 
 def get_current_market_price(CE_or_PE, strike_price):
     global current_price
-    i=1
-    for j in range (i):
-        try:
-            current_price = breeze.get_option_chain_quotes(stock_code="NIFTY",
-                                                   exchange_code="NFO",
-                                                   product_type="options",
-                                                   expiry_date=f'{expiry}T17:00:00.000Z',
-                                                   right=CE_or_PE,
-                                                   strike_price=strike_price
-                                                  )
-            time.sleep(0.1)
-            if current['Status']==200:
-              current_price = current_price['Success']
-              current_price = pd.DataFrame(current_price)
-              current_price = float(current_price['ltp'][0])
-              return current_price
-            else:
-              i+=1
-        except Exception as e:
-            i+=1
-            time.sleep(4)
-            continue
-    
+
+    if one_tick is not None and (CE_or_PE.title()==one_tick['right'] and strike_price==int(one_tick['strike_price'])) :
+        current_price=one_tick['last']
+        return current_price
+    return None
+
+
 
 
 def update_trailing_sl(positions_df):
     positions_to_exit = []
 
     for index, position in positions_df.iterrows():
-        current_price = float(get_current_market_price(position['CE_or_PE'], position['strike']))
+        current_price = get_current_market_price(position['CE_or_PE'], position['strike'])
 
         
-        if current_price >= position['trailing_sl']:
+        if current_price is not None and float(current_price) >= position['trailing_sl']:
+            current_price=float(current_price)
             positions_to_exit.append(index)
             time = datetime.now().strftime('%H:%M:%S')
             print('position exit')
+            deactivate_ws(position['CE_or_PE'], position['strike'])
             csv_file = "Directional_selling.csv"
             try:
                 with open(csv_file, 'x', newline='') as file:
@@ -81,7 +99,8 @@ def update_trailing_sl(positions_df):
                     writer = csv.writer(file)
                     writer.writerow([today, time, position['strike'], position['CE_or_PE'], 'Buy', -(current_price)])
 
-        elif current_price < position['trailing_sl'] - position['premium']:
+        elif current_price is not None and float(current_price) < position['trailing_sl'] - position['premium']:
+            current_price=float(current_price)
             positions_df.at[index, 'trailing_sl'] = current_price + position['premium']
             
     for index in positions_to_exit:
@@ -95,9 +114,10 @@ def closest_put_otm() :
     strikes = [atm_strike-50, atm_strike-100, atm_strike-150, atm_strike-200, atm_strike-250, atm_strike-300, atm_strike-350, atm_strike-400, atm_strike-450, atm_strike-500, atm_strike-550, atm_strike-600, atm_strike-650, atm_strike-700, atm_strike-750, atm_strike-800, atm_strike-850, atm_strike-900]
             
     ltps = []
-
+    
     for strike in strikes:
-        for j in range(0, 5):
+        i=1
+        for j in range(i):
             try:
                 leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
                                                         exchange_code="NFO",
@@ -105,13 +125,19 @@ def closest_put_otm() :
                                                         expiry_date=f'{expiry}T06:00:00.000Z',
                                                         right="put",
                                                         strike_price=strike)
-                leg_df = leg['Success']
-                leg_df = pd.DataFrame(leg_df)
-                break
+                if leg['Status']==200:
+                    leg_df = leg['Success']
+                    leg_df = pd.DataFrame(leg_df)
+                    ltp_value = float(leg_df['ltp'])
+                    break
+                else:
+                    i+=1
             except:
+                i+=1
+                time.sleep(3)
                 pass
-    
-        ltp_value = float(leg_df['ltp'])
+                
+        
         ltps.append({'strike_price': strike, 'ltp': ltp_value})
                     
 
@@ -137,7 +163,8 @@ def closest_call_otm():
 
 
     for strike in strikes:
-        for j in range(0, 5):
+        i=1
+        for j in range(i):
             try:
                 leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
                                                         exchange_code="NFO",
@@ -145,10 +172,15 @@ def closest_call_otm():
                                                         expiry_date=f'{expiry}T06:00:00.000Z',
                                                         right="call",
                                                         strike_price=strike)
-                leg_df = leg['Success']
-                leg_df = pd.DataFrame(leg_df)
-                break
+                if leg['Status']==200:
+                    leg_df = leg['Success']
+                    leg_df = pd.DataFrame(leg_df)
+                    break
+                else:
+                    i+=1
             except:
+                i+=1
+                time.sleep(3)
                 pass
     
         ltp_value = float(leg_df['ltp'])
@@ -173,12 +205,15 @@ def closest_call_otm():
 def check_profit_target_and_add_position(positions_df):
     if not positions_df.empty:
         last_position = positions_df.iloc[-1]
-        current_price = float(get_current_market_price(last_position['CE_or_PE'], last_position['strike']))
+        # initiate_ws(last_position['CE_or_PE'],last_position['strike'])
+        
+        current_price = get_current_market_price(last_position['CE_or_PE'], last_position['strike'])
 
         target_price = last_position['premium'] * 0.75
         print(f"Current Price: {current_price}, Target Price: {target_price}")
 
-        if (2.5) < current_price <= target_price:
+        if current_price is not None and ((2.5) < float(current_price) <= target_price):
+            current_price=float(current_price)
             for j in range(5):
                 try:
                     nifty_spot_response = breeze.get_quotes(stock_code="NIFTY", exchange_code="NSE",
@@ -256,7 +291,7 @@ def check_profit_target_and_add_position(positions_df):
 
         # Debug: Print the updated positions_df
         print(positions_df)
-
+        # deactivate_ws(last_position['CE_or_PE'],last_position['strike'])
     return positions_df
 
 
@@ -295,8 +330,8 @@ while True:
         if last_row['close'] > resistance :
             atm_strike = round(last_row['close']/50) * 50
             closest_price_pe = closest_put_otm()
-            i=1
-            for j in range(i):
+
+            for j in range(0,5):
                 try:
                     option_data = breeze.get_historical_data_v2(interval="5minute",
                                                         from_date= f"{today}T07:00:00.000Z",
@@ -307,14 +342,8 @@ while True:
                                                         expiry_date=f"{expiry}T07:00:00.000Z",
                                                         right="put",
                                                         strike_price=closest_strike_pe)
-                    
-                    if option_data['Status']==200:
-                      break
-                    else:
-                      i+=1
+                    break
                 except:
-                    i+=1
-                    time.sleep(5)
                     pass
             
             option_data = option_data['Success']
@@ -329,7 +358,7 @@ while True:
                 order = 1
                 time = datetime.now().strftime('%H:%M:%S')
                 entry_premium = last['close']
-                SL = entry_preium
+                SL = entry_premium
                 tsl = entry_premium + SL
                 positions = []
 
@@ -343,7 +372,8 @@ while True:
                 }
                 
                 positions.append(position)
-            
+                initiate_ws('put',closest_strike_pe)
+                time_.sleep(4)
                 print('SELL', closest_strike_pe, 'PUT at', entry_premium)
                 
                 csv_file = "Directional_selling.csv"
@@ -393,7 +423,7 @@ while True:
                 order = -1
                 time = datetime.now().strftime('%H:%M:%S')
                 entry_premium = last['close']
-                SL = entry_preium
+                SL = entry_premium
                 tsl = entry_premium + SL
                 positions = []
 
@@ -407,8 +437,8 @@ while True:
                 }
                 
                 positions.append(position)
-
-                
+                initiate_ws('call',closest_strike_ce)
+                time_.sleep(4)
                 print('SELL', closest_strike_ce, 'CALL at', entry_premium)
                 
                 csv_file = "Directional_selling.csv"
@@ -504,7 +534,8 @@ while True:
                 positions.append(position)
                 positions_df = pd.DataFrame(positions)
 
-            
+                initiate_ws('put',closest_strike_pe)
+                time_.sleep(3)
                 print('SELL', closest_strike_pe, 'PUT at', entry_premium)
                 
                 csv_file = "Directional_selling.csv"
@@ -567,7 +598,8 @@ while True:
 
                 positions_df = pd.DataFrame(positions)
 
-                
+                initiate_ws('call',closest_strike_ce)
+                time_.sleep(4)
                 print('SELL', closest_strike_ce, 'CALL at', entry_premium)
                 
                 csv_file = "Directional_selling.csv"
@@ -589,24 +621,22 @@ while True:
             
                     
     if not positions_df.empty:
-        import time
+        import time,os
         positions_df = update_trailing_sl(positions_df)
         positions_df = check_profit_target_and_add_position(positions_df)
         if now.time() >= t(15, 20):
             path="unclosed_positions_directional.csv"
             # if os.path.exists(path):
 
-            #     positions_df.to_csv(path,header=False,mode='a',index=False)
+            #     positions_df.to_csv(csv_file,header=False,mode='a',index=False)
             # else:
             positions_df.to_csv(path,header=True,index=False)
             print("All open Positions Saved and Market closed")
             quit()
         print(now)        
-        time.sleep(20)
+        
 
 
         
             
         
-
-
