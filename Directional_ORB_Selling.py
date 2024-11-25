@@ -48,14 +48,14 @@ def get_current_market_price(CE_or_PE, strike_price):
               current_price = current_price['Success']
               current_price = pd.DataFrame(current_price)
               current_price = float(current_price['ltp'][0])
-              break
+              return current_price
             else:
               i+=1
         except Exception as e:
             i+=1
             time.sleep(4)
             continue
-    return current_price
+    
 
 
 def update_trailing_sl(positions_df):
