@@ -288,8 +288,8 @@ while True:
         if last_row['close'] > resistance :
             atm_strike = round(last_row['close']/50) * 50
             closest_price_pe = closest_put_otm()
-
-            for j in range(0,5):
+            i=1
+            for j in range(i):
                 try:
                     option_data = breeze.get_historical_data_v2(interval="5minute",
                                                         from_date= f"{today}T07:00:00.000Z",
@@ -300,8 +300,14 @@ while True:
                                                         expiry_date=f"{expiry}T07:00:00.000Z",
                                                         right="put",
                                                         strike_price=closest_strike_pe)
-                    break
+                    
+                    if option_data['Status']==200:
+                      break
+                    else:
+                      j+=1
                 except:
+                    j+=1
+                    time.sleep(5)
                     pass
             
             option_data = option_data['Success']
