@@ -139,17 +139,17 @@ while True:
                 initiate_ws(atm,'call')
                 # try:
                 time.sleep(2)
-                buy_price=float(one_tick['last'])
+                # buy_price=float(one_tick['last'])
                 # except:
-                # leg = breeze.get_option_chain_quotes(stock_code="CNXBAN",
-                #                                     exchange_code="NFO",
-                #                                     product_type="options",
-                #                                     expiry_date=f'{expiry}T06:00:00.000Z',
-                #                                     right="call",
-                #                                     strike_price=atm)
-                # leg = leg['Success']
-                # leg = pd.DataFrame(leg)
-                # buy_price = float(leg['ltp'][0])
+                leg = breeze.get_option_chain_quotes(stock_code="CNXBAN",
+                                                    exchange_code="NFO",
+                                                    product_type="options",
+                                                    expiry_date=f'{expiry}T06:00:00.000Z',
+                                                    right="call",
+                                                    strike_price=atm)
+                leg = leg['Success']
+                leg = pd.DataFrame(leg)
+                buy_price = float(leg['ltp'][0])
                 
                 sl=buy_price-stoploss
                 # deactivate_ws(atm,'call')
@@ -161,7 +161,16 @@ while True:
                 atm = round(last_row['close'] / 100) * 100
                 initiate_ws(atm,'put')
                 time.sleep(5)
-                buy_price=float(one_tick['last'])
+                # buy_price=float(one_tick['last'])
+                leg = breeze.get_option_chain_quotes(stock_code="CNXBAN",
+                                                    exchange_code="NFO",
+                                                    product_type="options",
+                                                    expiry_date=f'{expiry}T06:00:00.000Z',
+                                                    right="put",
+                                                    strike_price=atm)
+                leg = leg['Success']
+                leg = pd.DataFrame(leg)
+                buy_price = float(leg['ltp'][0])
                 sl=buy_price-stoploss
                 # deactivate_ws(atm,'put')
                 print(now, 'buy', atm, 'put at:', buy_price)
