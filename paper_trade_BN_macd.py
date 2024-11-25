@@ -185,7 +185,7 @@ while True:
                 pnl = round(sell_price - buy_price, 2)
                 print(now, 'exit', atm, 'call pnl is:', pnl)
                 deactivate_ws(atm,right='call')
-                write_data=pd.DataFrame([[today, entry_time, atm, 'call', buy_price, exit_time, sell_price, pnl]],columns=['Date', 'Entry Time', 'Strike', 'CE or PE', 'Entry premium','Exit Time', 'Exit premium', 'PnL'])
+                write_data=pd.DataFrame([[today, entry_time, atm, 'put', buy_price, exit_time, sell_price, pnl]],columns=['Date', 'Entry Time', 'Strike', 'CE or PE', 'Entry premium','Exit Time', 'Exit premium', 'PnL'])
 
                 csv_file = "Paper_trade_BN_macd.csv"
                 if os.path.exists(csv_file):
