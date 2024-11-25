@@ -44,6 +44,7 @@ def get_current_market_price(CE_or_PE, strike_price):
                                                    right=CE_or_PE,
                                                    strike_price=strike_price
                                                   )
+            time.sleep(0.1)
             if current['Status']==200:
               current_price = current_price['Success']
               current_price = pd.DataFrame(current_price)
