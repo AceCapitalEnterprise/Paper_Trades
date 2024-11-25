@@ -34,7 +34,8 @@ else:
 
 def get_current_market_price(CE_or_PE, strike_price):
     global current_price
-    for j in range (0, 5):
+    i=1
+    for j in range (i):
         try:
             current_price = breeze.get_option_chain_quotes(stock_code="NIFTY",
                                                    exchange_code="NFO",
@@ -43,11 +44,16 @@ def get_current_market_price(CE_or_PE, strike_price):
                                                    right=CE_or_PE,
                                                    strike_price=strike_price
                                                   )
-            current_price = current_price['Success']
-            current_price = pd.DataFrame(current_price)
-            current_price = float(current_price['ltp'][0])
-            break
+            if current['Status']==200:
+              current_price = current_price['Success']
+              current_price = pd.DataFrame(current_price)
+              current_price = float(current_price['ltp'][0])
+              break
+            else:
+              i+=1
         except Exception as e:
+            i+=1
+            time.sleep(4)
             continue
     return current_price
 
@@ -304,9 +310,9 @@ while True:
                     if option_data['Status']==200:
                       break
                     else:
-                      j+=1
+                      i+=1
                 except:
-                    j+=1
+                    i+=1
                     time.sleep(5)
                     pass
             
