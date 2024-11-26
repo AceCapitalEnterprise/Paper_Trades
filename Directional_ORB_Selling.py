@@ -25,13 +25,6 @@ expiry1 = '28-Nov-2024'
 fut_expiry = '2024-11-28'
 
 SL = 5
-path="unclosed_positions_directional.csv"
-if os.path.exists(path):
-    positions_df=pd.read_csv(path)
-else:
-    positions = []
-    positions_df = pd.DataFrame(columns=['datetime', 'action', 'strike', 'premium', 'trailing_sl'])
-
 one_tick=None
 
 breeze.ws_connect()
@@ -63,6 +56,22 @@ def deactivate_ws(CE_or_PE,strike_price):
                                  strike_price=str(strike_price),
                                  get_exchange_quotes=True,
                                  get_market_depth=False)
+
+
+path="unclosed_positions_directional.csv"
+if os.path.exists(path):
+    positions_df=pd.read_csv(path)
+    if not positions_df.empty:
+        for _,row in positions_df.iterrows():
+            initiate_ws(row['CE_or_PE'],row['strike'])
+    
+else:
+    positions = []
+    positions_df = pd.DataFrame(columns=['datetime', 'action', 'strike', 'premium', 'trailing_sl'])
+
+
+
+
 
 
 def get_current_market_price(CE_or_PE, strike_price):
@@ -623,6 +632,7 @@ while True:
                     
     if not positions_df.empty:
         import time,os
+        
         positions_df = update_trailing_sl(positions_df)
         positions_df = check_profit_target_and_add_position(positions_df)
         if now.time() >= t(15, 20):
