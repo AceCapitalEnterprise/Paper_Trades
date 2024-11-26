@@ -25,6 +25,7 @@ expiry1 = '28-Nov-2024'
 fut_expiry = '2024-11-28'
 
 SL = 5
+today = datetime.now().strftime("%Y-%m-%d")
 one_tick=None
 
 breeze.ws_connect()
