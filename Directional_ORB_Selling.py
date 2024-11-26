@@ -133,8 +133,8 @@ def closest_put_otm() :
     ltps = []
     
     for strike in strikes:
-        i=1
-        for j in range(i):
+        
+        for j in range(0,5):
             try:
                 leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
                                                         exchange_code="NFO",
@@ -142,15 +142,12 @@ def closest_put_otm() :
                                                         expiry_date=f'{expiry}T06:00:00.000Z',
                                                         right="put",
                                                         strike_price=strike)
-                if leg['Status']==200:
-                    leg_df = leg['Success']
-                    leg_df = pd.DataFrame(leg_df)
-                    ltp_value = float(leg_df['ltp'])
-                    break
-                else:
-                    i+=1
+                
+                leg_df = leg['Success']
+                leg_df = pd.DataFrame(leg_df)
+                ltp_value = float(leg_df['ltp'])
+                break
             except:
-                i+=1
                 time.sleep(3)
                 pass
                 
@@ -189,14 +186,12 @@ def closest_call_otm():
                                                         expiry_date=f'{expiry}T06:00:00.000Z',
                                                         right="call",
                                                         strike_price=strike)
-                if leg['Status']==200:
-                    leg_df = leg['Success']
-                    leg_df = pd.DataFrame(leg_df)
-                    break
-                else:
-                    i+=1
+
+                leg_df = leg['Success']
+                leg_df = pd.DataFrame(leg_df)
+                break
+
             except:
-                i+=1
                 time.sleep(3)
                 pass
     
@@ -300,6 +295,8 @@ def check_profit_target_and_add_position(positions_df):
                     'premium': leg_price,
                     'trailing_sl': 2*leg_price
                 }
+            initiate_WS(new_position['CE_or_PE'],closest_call_ce)
+            time_.sleep(4)
             csv_file='Directional_selling.csv'
             with open(csv_file, 'a', newline='') as file:
                 writer = csv.writer(file)
