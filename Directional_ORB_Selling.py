@@ -20,6 +20,7 @@ warnings.filterwarnings("ignore")
 time_1 = t(9, 30)
 time_2 = t(15, 30)
 order = 0
+atm_strike=None
 expiry = '2024-11-28'
 expiry1 = '28-Nov-2024'
 fut_expiry = '2024-11-28'
@@ -219,6 +220,7 @@ def closest_call_otm():
 
 
 def check_profit_target_and_add_position(positions_df):
+    
     if not positions_df.empty:
         last_position = positions_df.iloc[-1]
         # initiate_ws(last_position['CE_or_PE'],last_position['strike'])
@@ -245,6 +247,7 @@ def check_profit_target_and_add_position(positions_df):
                     continue
 
             atm = round(nifty_spot_price / 50) * 50
+            global atm_strike
             atm_strike=atm
 
             if last_position['CE_or_PE'] == 'put':
