@@ -65,7 +65,7 @@ if os.path.exists(path):
     if not positions_df.empty:
         for _,row in positions_df.iterrows():
             initiate_ws(row['CE_or_PE'],row['strike'])
-            time.sleep(4)
+            time_.sleep(4)
     
 else:
     positions = []
@@ -646,7 +646,7 @@ while True:
             positions_df.to_csv(path,header=True,index=False)
             print("All open Positions Saved and Market closed")
             quit()
-        time.sleep(3)
+        time_.sleep(3)
         print(now)        
         
 
