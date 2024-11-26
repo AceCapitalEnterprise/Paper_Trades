@@ -245,8 +245,10 @@ def check_profit_target_and_add_position(positions_df):
                     continue
 
             atm = round(nifty_spot_price / 50) * 50
+            atm_strike=atm
 
             if last_position['CE_or_PE'] == 'put':
+                
                 closest_strike_pe = closest_put_otm()
                 for j in range(5):
                     try:
