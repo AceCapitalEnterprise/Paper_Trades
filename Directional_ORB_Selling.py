@@ -89,7 +89,7 @@ else:
 def get_current_market_price(CE_or_PE, strike_price):
     global current_price,tick_data
     print(f"Fetching price for: CE_or_PE={CE_or_PE}, strike_price={strike_price}")
-    print(f"Tick data: {tick_data.get(strike_price)}")
+    # print(f"Tick data: {tick_data.get(strike_price)}")
 
     CE_or_PE = CE_or_PE.title()
     if strike_price in tick_data and tick_data[strike_price]!='':
