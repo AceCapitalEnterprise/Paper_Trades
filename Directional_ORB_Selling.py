@@ -35,6 +35,8 @@ def on_ticks(ticks):
     print(ticks)
     one_tick=ticks
     print("-----------------------------------------------")
+    
+breeze.on_ticks=on_ticks
 
 def initiate_ws(CE_or_PE, strike_price):
     leg = breeze.subscribe_feeds(exchange_code="NFO",
@@ -66,7 +68,7 @@ if os.path.exists(path):
     if not positions_df.empty:
         for _,row in positions_df.iterrows():
             initiate_ws(row['CE_or_PE'],row['strike'])
-            time_.sleep(4)
+            time_.sleep(3)
     
 else:
     positions = []
@@ -647,7 +649,7 @@ while True:
             positions_df.to_csv(path,header=True,index=False)
             print("All open Positions Saved and Market closed")
             quit()
-        time_.sleep(3)
+        time_.sleep(1)
         print(now)        
         
 
