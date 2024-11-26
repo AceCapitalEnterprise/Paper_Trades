@@ -300,7 +300,7 @@ def check_profit_target_and_add_position(positions_df):
                     'premium': leg_price,
                     'trailing_sl': 2*leg_price
                 }
-
+            csv_file='Directional_selling.csv'
             with open(csv_file, 'a', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow([today, datetime.now().strftime('%H:%M:%S'), new_position['strike'], new_position['CE_or_PE'], 'Sell', leg_price])
