@@ -32,8 +32,9 @@ breeze.ws_connect()
 
 def on_ticks(ticks):
     global one_tick
-
+    print(ticks)
     one_tick=ticks
+    print("-----------------------------------------------")
 
 def initiate_ws(CE_or_PE, strike_price):
     leg = breeze.subscribe_feeds(exchange_code="NFO",
