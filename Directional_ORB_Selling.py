@@ -37,7 +37,7 @@ def on_ticks(ticks):
     # print(ticks)
     # one_tick=ticks
     if int(ticks['strike_price']) in tick_data:
-        tick_data[ticks['strike_price']] = ticks
+        tick_data[int(ticks['strike_price'])] = ticks
         print(tick_data)
     # print("-----------------------------------------------")
     
