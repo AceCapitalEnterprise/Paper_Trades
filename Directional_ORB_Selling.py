@@ -34,9 +34,9 @@ breeze.ws_connect()
 
 def on_ticks(ticks):
     global one_tick
-    print(ticks)
+    # print(ticks)
     one_tick=ticks
-    print("-----------------------------------------------")
+    # print("-----------------------------------------------")
     
 breeze.on_ticks=on_ticks
 
