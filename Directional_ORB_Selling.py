@@ -31,16 +31,20 @@ one_tick=None
 
 breeze.ws_connect()
 
-
+tick_data= {}
 def on_ticks(ticks):
-    global one_tick
+    global tick_data
     # print(ticks)
-    one_tick=ticks
+    # one_tick=ticks
+    if int(ticks['strike_price']) in tick_data:
+        tick_data[ticks['strike_price']] = ticks
+        print(tick_data)
     # print("-----------------------------------------------")
     
 breeze.on_ticks=on_ticks
 
 def initiate_ws(CE_or_PE, strike_price):
+    global tick_data
     leg = breeze.subscribe_feeds(exchange_code="NFO",
                                 stock_code="NIFTY",
                                 product_type="options",
@@ -49,6 +53,7 @@ def initiate_ws(CE_or_PE, strike_price):
                                 strike_price=str(strike_price),
                                 get_exchange_quotes=True,
                                 get_market_depth=False)
+    tick_data[strike_price]=''
     print(leg)
     # time.sleep(2)
 
@@ -82,10 +87,11 @@ else:
 
 
 def get_current_market_price(CE_or_PE, strike_price):
-    global current_price
-
-    if one_tick is not None and (CE_or_PE.title()==one_tick['right'] and strike_price==int(one_tick['strike_price'])) :
-        current_price=one_tick['last']
+    global current_price,tick_data
+    print(CE_or_PE)
+    if strike_price in tick_data:
+        
+        current_price=tick_data[strike_price['last']]
         return current_price
     return None
 
