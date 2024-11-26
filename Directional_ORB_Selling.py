@@ -646,6 +646,7 @@ while True:
             positions_df.to_csv(path,header=True,index=False)
             print("All open Positions Saved and Market closed")
             quit()
+        time.sleep(3)
         print(now)        
         
 
