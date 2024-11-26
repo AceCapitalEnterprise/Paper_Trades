@@ -44,6 +44,7 @@ def initiate_ws(CE_or_PE, strike_price):
                                 strike_price=str(strike_price),
                                 get_exchange_quotes=True,
                                 get_market_depth=False)
+    print(leg)
     # time.sleep(2)
 
 
@@ -64,6 +65,7 @@ if os.path.exists(path):
     if not positions_df.empty:
         for _,row in positions_df.iterrows():
             initiate_ws(row['CE_or_PE'],row['strike'])
+            time.sleep(4)
     
 else:
     positions = []
