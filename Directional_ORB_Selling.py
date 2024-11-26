@@ -38,7 +38,7 @@ def on_ticks(ticks):
     # one_tick=ticks
     if int(ticks['strike_price']) in tick_data:
         tick_data[int(ticks['strike_price'])] = ticks
-        print(tick_data)
+        # print(tick_data)
     # print("-----------------------------------------------")
     
 breeze.on_ticks=on_ticks
@@ -88,12 +88,13 @@ else:
 
 def get_current_market_price(CE_or_PE, strike_price):
     global current_price,tick_data
-    print(CE_or_PE,CE_or_PE.title())
+    print(CE_or_PE,strike_price)
+    print(tick_data[strike_price])
     CE_or_PE=CE_or_PE.title()
-    if strike_price in tick_data and tick_data[strike_price]!='' and tick_data[strike_price['right']]==CE_or_PE:
-        
-        current_price=tick_data[strike_price['last']]
-        return current_price
+    if strike_price in tick_data and tick_data[strike_price]!='':
+        if tick_data[strike_price['right']]==CE_or_PE:
+            current_price=tick_data[strike_price['last']]
+            return current_price
     return None
 
 
