@@ -88,7 +88,7 @@ else:
 
 def get_current_market_price(CE_or_PE, strike_price):
     global current_price,tick_data
-    print(CE_or_PE,CE_PE.title())
+    print(CE_or_PE,CE_or_PE.title())
     if strike_price in tick_data:
         
         current_price=tick_data[strike_price['last']]
