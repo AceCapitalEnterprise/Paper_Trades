@@ -176,7 +176,7 @@ while True:
                 print(now, 'buy', atm, 'put at:', buy_price)
             else:
                 print(last_row['datetime'], 'no trade condition: rsi is ', last_row['RSI_14'], 'macd is ', last_row['MACD'])
-    if order==1 and last_row is not None:
+    if order==1 and last_row is not None and one_tick is not None:
         premium=one_tick['last']
         
         if premium >= buy_price-sl:
@@ -202,7 +202,7 @@ while True:
 
                 else:
                     write_data.to_csv(csv_file,header=True,index=False)
-    if order==-1 and last_row is not None:
+    if order==-1 and last_row is not None and one_tick is not None:
         premium=one_tick['last']
         if premium >= buy_price-sl:
                 sl = adjust_trailing_sl(premium, sl, order)
