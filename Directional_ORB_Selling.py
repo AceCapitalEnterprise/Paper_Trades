@@ -286,6 +286,8 @@ def check_profit_target_and_add_position(positions_df):
                     'premium': leg_price,
                     'trailing_sl': 2*leg_price
                 }
+                initiate_ws(new_position['CE_or_PE'],closest_call_pe)
+                time_.sleep(4)
 
             else:
                 closest_call_ce = closest_call_otm()
@@ -311,8 +313,8 @@ def check_profit_target_and_add_position(positions_df):
                     'premium': leg_price,
                     'trailing_sl': 2*leg_price
                 }
-            initiate_ws(new_position['CE_or_PE'],closest_call_ce)
-            time_.sleep(4)
+                initiate_ws(new_position['CE_or_PE'],closest_call_ce)
+                time_.sleep(4)
             csv_file='Directional_selling.csv'
             with open(csv_file, 'a', newline='') as file:
                 writer = csv.writer(file)
