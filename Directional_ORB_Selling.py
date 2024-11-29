@@ -21,9 +21,9 @@ time_1 = t(9, 30)
 time_2 = t(15, 30)
 order = 0
 atm_strike=None
-expiry = '2024-11-28'
-expiry1 = '28-Nov-2024'
-fut_expiry = '2024-11-28'
+expiry = '2024-12-05'
+expiry1 = '05-Dec-2024'
+fut_expiry = '2024-12-26'
 
 SL = 5
 today = datetime.now().strftime("%Y-%m-%d")
