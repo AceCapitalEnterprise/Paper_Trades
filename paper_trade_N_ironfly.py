@@ -19,8 +19,8 @@ warnings.filterwarnings("ignore")
 time_1 = t(9,15)
 time_2 = t(15,30)
 
-expiry = '2024-11-28'
-fut_expiry = '2024-11-28'
+expiry = '2024-12-05'
+fut_expiry = '2024-12-26'
 
 #qty = 25
 order = 0
