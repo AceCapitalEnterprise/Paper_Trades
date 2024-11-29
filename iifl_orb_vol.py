@@ -92,7 +92,7 @@ order = 2
 quantity="25"
 today = datetime.now().strftime("%Y-%m-%d")
 #fut_expiry  = "2024-10-31"
-expiry_1 = datetime(2024, 12, 05)
+expiry_1 = datetime(2024, 12, 5)
 option_expiry_date = "05Dec2024"
 # Define the parameters for the GET request
 exchange_segment = 2  # NSEFO for futures
