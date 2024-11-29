@@ -39,8 +39,8 @@ stoploss = 15
 order = 0
 quantity="250"
 today = datetime.now().strftime("%Y-%m-%d")
-fut_expiry  = "2024-11-28"
-option_expiry_date = "2024-11-28"
+fut_expiry  = "2024-12-26"
+option_expiry_date = "2024-12-05"
 expiry_date = f"{fut_expiry}T07:00:00.000Z"
 option_expiry = f"{option_expiry_date}T07:00:00.000Z"
 
