@@ -143,7 +143,7 @@ def update_trailing_sl(positions_df):
 
 
 def closest_put_otm() :
-    strikes = [atm_strike-50, atm_strike-100, atm_strike-150, atm_strike-200, atm_strike-250, atm_strike-300, atm_strike-350, atm_strike-400, atm_strike-450, atm_strike-500, atm_strike-550, atm_strike-600, atm_strike-650, atm_strike-700, atm_strike-750, atm_strike-800, atm_strike-850, atm_strike-900]
+    strikes = [atm_strike-50, atm_strike-100, atm_strike-150, atm_strike-200, atm_strike-250, atm_strike-300, atm_strike-350, atm_strike-400, atm_strike-450, atm_strike-500, atm_strike-550, atm_strike-600, atm_strike-650, atm_strike-700, atm_strike-750, atm_strike-800, atm_strike-850, atm_strike-900,atm_strike-950,atm_strike-1000,atm_strike-1050]
             
     ltps = []
     
@@ -161,6 +161,7 @@ def closest_put_otm() :
                 leg_df = leg['Success']
                 leg_df = pd.DataFrame(leg_df)
                 ltp_value = float(leg_df['ltp'])
+                time.sleep(0.1)
                 break
             except:
                 time.sleep(3)
@@ -186,7 +187,7 @@ def closest_put_otm() :
 
 
 def closest_call_otm():
-    strikes = [atm_strike+50, atm_strike+100, atm_strike+150, atm_strike+200, atm_strike+250, atm_strike+300, atm_strike+350, atm_strike+400, atm_strike+450, atm_strike+500, atm_strike+550, atm_strike+600, atm_strike+650, atm_strike+700, atm_strike+750, atm_strike+800, atm_strike+850, atm_strike+900]
+    strikes = [atm_strike+50, atm_strike+100, atm_strike+150, atm_strike+200, atm_strike+250, atm_strike+300, atm_strike+350, atm_strike+400, atm_strike+450, atm_strike+500, atm_strike+550, atm_strike+600, atm_strike+650, atm_strike+700, atm_strike+750, atm_strike+800, atm_strike+850, atm_strike+900,atm_strike+950,atm_strike+1000,atm_strike+1050]
             
     ltps = []
 
