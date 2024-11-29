@@ -6,7 +6,7 @@
 
 
 import numpy as np
-from breeze1 import *
+# from breeze1 import *
 import pandas as pd
 from datetime import datetime, date, timedelta, time as t
 import csv, re, time, math
@@ -36,8 +36,8 @@ def on_ticks(ticks):
     global tick_data
     # print(ticks)
     # one_tick=ticks
-    if int(ticks['strike_price']) in tick_data:
-        tick_data[int(ticks['strike_price'])] = ticks
+    if f'{ticks['strike_price']}_{ticks['right']}' in tick_data:
+        tick_data[f'{ticks['strike_price']}_{ticks['right']}'] = ticks
         # print(tick_data)
     # print("-----------------------------------------------")
     
@@ -53,13 +53,13 @@ def initiate_ws(CE_or_PE, strike_price):
                                 strike_price=str(strike_price),
                                 get_exchange_quotes=True,
                                 get_market_depth=False)
-    tick_data[strike_price]=''
+    tick_data[f'{strike_price}_{CE_or_PE}']=''
     print(leg)
     # time.sleep(2)
 
 
 def deactivate_ws(CE_or_PE,strike_price):
-    breeze.unsubscribe_feeds(exchange_code="NFO",
+    leg=breeze.unsubscribe_feeds(exchange_code="NFO",
                                  stock_code="NIFTY",
                                  product_type="options",
                                  expiry_date=expiry1,
@@ -67,6 +67,9 @@ def deactivate_ws(CE_or_PE,strike_price):
                                  strike_price=str(strike_price),
                                  get_exchange_quotes=True,
                                  get_market_depth=False)
+    if f'{strike_price}_{CE_or_PE}' in tick_data:
+        tick_data.pop(f'{strike_price}_{CE_or_PE}')
+    print(leg)
 
 
 path="unclosed_positions_directional.csv"
@@ -91,10 +94,10 @@ def get_current_market_price(CE_or_PE, strike_price):
     print(f"Fetching price for: CE_or_PE={CE_or_PE}, strike_price={strike_price}")
     # print(f"Tick data: {tick_data.get(strike_price)}")
 
-    CE_or_PE = CE_or_PE.title()
-    if strike_price in tick_data and tick_data[strike_price]!='':
-        tick_entry = tick_data[strike_price]
-
+    
+    if f'{strike_price}_{CE_or_PE}' in tick_data and tick_data[f'{strike_price}_{CE_or_PE}']!='':
+        tick_entry = tick_data[f'{strike_price}_{CE_or_PE}']
+        CE_or_PE = CE_or_PE.title()
         # Check if the tick data contains the correct option type (CE/PE)
         if tick_entry.get('right') == CE_or_PE:
             current_price = tick_entry.get('last')  # Fetch the 'last' price
@@ -415,7 +418,7 @@ while True:
                     pass
                     with open(csv_file, 'a', newline='') as file:
                         writer = csv.writer(file)
-                        writer.writerow([today, time, closest_strike_pe, 'PE', 'Sell', entry_premium])
+                        writer.writerow([today, time, closest_strike_pe, 'put', 'Sell', entry_premium])
                         
             else:
                 print(now, 'No decay in option chart')
@@ -480,7 +483,7 @@ while True:
                     pass
                     with open(csv_file, 'a', newline='') as file:
                         writer = csv.writer(file)
-                        writer.writerow([today, time, closest_strike_ce, 'CE', 'Sell', entry_premium])
+                        writer.writerow([today, time, closest_strike_ce, 'call', 'Sell', entry_premium])
                         
             else:
                 print(now, 'no decay in option chart')
@@ -577,7 +580,7 @@ while True:
                     pass
                     with open(csv_file, 'a', newline='') as file:
                         writer = csv.writer(file)
-                        writer.writerow([today, time, closest_strike_pe, 'PE', 'Sell', entry_premium])
+                        writer.writerow([today, time, closest_strike_pe, 'put', 'Sell', entry_premium])
                         
             else:
                 print(now, 'No decay in option chart')
@@ -641,7 +644,7 @@ while True:
                     pass
                     with open(csv_file, 'a', newline='') as file:
                         writer = csv.writer(file)
-                        writer.writerow([today, time, closest_strike_ce, 'CE', 'Sell', entry_premium])
+                        writer.writerow([today, time, closest_strike_ce, 'call', 'Sell', entry_premium])
                         
             else:
                 print(now, 'no decay in option chart')
@@ -666,9 +669,4 @@ while True:
             quit()
         time_.sleep(1)
         print(now)        
-        
-
-
-        
-            
         
