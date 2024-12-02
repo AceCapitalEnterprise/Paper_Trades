@@ -288,7 +288,7 @@ def check_profit_target_and_add_position(positions_df):
                     'premium': leg_price,
                     'trailing_sl': 2*leg_price
                 }
-                initiate_ws(new_position['CE_or_PE'],closest_call_pe)
+                initiate_ws(new_position['CE_or_PE'],closest_strike_pe)
                 time_.sleep(4)
 
             else:
@@ -367,7 +367,7 @@ while True:
         
         if last_row['close'] > resistance :
             atm_strike = round(last_row['close']/50) * 50
-            closest_price_pe = closest_put_otm()
+            closest_strike_pe = closest_put_otm()
 
             for j in range(0,5):
                 try:
@@ -432,7 +432,7 @@ while True:
                         
         if last_row['close'] < support :
             atm_strike = round(last_row['close']/50) * 50
-            closest_price_ce = closest_call_otm()
+            closest_strike_ce = closest_call_otm()
             
             for j in range(0,5):
                 try:
