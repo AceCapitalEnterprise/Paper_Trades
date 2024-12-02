@@ -196,7 +196,7 @@ def closest_call_otm():
 
     for strike in strikes:
         i=1
-        for j in range(i):
+        for j in range(0,5):
             try:
                 leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
                                                         exchange_code="NFO",
