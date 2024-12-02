@@ -53,6 +53,7 @@ def initiate_ws(CE_or_PE, strike_price):
                                 strike_price=str(strike_price),
                                 get_exchange_quotes=True,
                                 get_market_depth=False)
+    CE_or_PE = CE_or_PE.title()
     tick_data[f'{strike_price}_{CE_or_PE}']=''
     print(leg)
     # time.sleep(2)
@@ -67,6 +68,7 @@ def deactivate_ws(CE_or_PE,strike_price):
                                  strike_price=str(strike_price),
                                  get_exchange_quotes=True,
                                  get_market_depth=False)
+    CE_or_PE = CE_or_PE.title()
     if f'{strike_price}_{CE_or_PE}' in tick_data:
         tick_data.pop(f'{strike_price}_{CE_or_PE}')
     print(leg)
@@ -94,10 +96,10 @@ def get_current_market_price(CE_or_PE, strike_price):
     print(f"Fetching price for: CE_or_PE={CE_or_PE}, strike_price={strike_price}")
     # print(f"Tick data: {tick_data.get(strike_price)}")
 
-    
+    CE_or_PE = CE_or_PE.title()
     if f'{strike_price}_{CE_or_PE}' in tick_data and tick_data[f'{strike_price}_{CE_or_PE}']!='':
         tick_entry = tick_data[f'{strike_price}_{CE_or_PE}']
-        CE_or_PE = CE_or_PE.title()
+        # CE_or_PE = CE_or_PE.title()
         # Check if the tick data contains the correct option type (CE/PE)
         if tick_entry.get('right') == CE_or_PE:
             current_price = tick_entry.get('last')  # Fetch the 'last' price
