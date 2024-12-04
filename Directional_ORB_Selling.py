@@ -160,12 +160,12 @@ def closest_put_otm() :
                                                         expiry_date=f'{expiry}T06:00:00.000Z',
                                                         right="put",
                                                         strike_price=strike)
-                print('leg',leg)
+                # print('leg',leg)
                 
                 leg_df = leg['Success']
                 leg_df = pd.DataFrame(leg_df)
                 ltp_value = float(leg_df['ltp'])
-                print(ltp_value)
+                # print(ltp_value)
                 time_.sleep(0.1)
                 break
             except:
