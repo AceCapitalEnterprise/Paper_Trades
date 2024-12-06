@@ -215,7 +215,7 @@ def closest_call_otm():
                 break
 
             except:
-                time.sleep(0.2)
+                time_.sleep(0.2)
                 i+=1
                 pass
     
@@ -264,7 +264,7 @@ def check_profit_target_and_add_position(positions_df):
                     break
                 except Exception as e:
                     print(f"Error fetching Nifty spot: {e}")
-                    time.sleep(0.2)
+                    time_.sleep(0.2)
                     i+=1
                     continue
 
@@ -289,7 +289,7 @@ def check_profit_target_and_add_position(positions_df):
                     except Exception as e:
                         print(f"Error fetching Put leg: {e}")
                         i+=1
-                        time.sleep(0.2)
+                        time_.sleep(0.2)
                         continue
 
                 new_position = {
@@ -319,7 +319,7 @@ def check_profit_target_and_add_position(positions_df):
                     except Exception as e:
                         print(f"Error fetching Call leg: {e}")
                         i+=1
-                        time.sleep(0.2)
+                        time_.sleep(0.2)
                         continue
 
                 new_position = {
@@ -351,7 +351,7 @@ def check_profit_target_and_add_position(positions_df):
 while True:
     now = datetime.now()
     if t(9, 35)<=t(datetime.now().time().hour, datetime.now().time().minute)<t(9, 46) and now.second == 0 and positions_df.empty :
-        time.sleep(2)
+        time_.sleep(2)
         today = datetime.now().strftime("%Y-%m-%d")
         #yesterday = (datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d")
         i=0
@@ -369,7 +369,7 @@ while True:
                 break
             except:
                 i+=1
-                time.sleep(0.2)
+                time_.sleep(0.2)
                 pass
         
         olhc = data['Success']
@@ -401,7 +401,7 @@ while True:
                     break
                 except:
                     i+=1
-                    time.sleep(0.2)
+                    time_.sleep(0.2)
                     pass
             
             option_data = option_data['Success']
@@ -414,7 +414,7 @@ while True:
             if last['close'] <= sup :
                 initial_point = 0
                 order = 1
-                time = datetime.now().strftime('%H:%M:%S')
+                time = datetime_.now().strftime('%H:%M:%S')
                 entry_premium = last['close']
                 SL = entry_premium
                 tsl = entry_premium + SL
@@ -468,7 +468,7 @@ while True:
                     break
                 except:
                     i+=1
-                    time.sleep(0.2)
+                    time_.sleep(0.2)
                     pass
             
             option_data = option_data['Success']
@@ -520,7 +520,7 @@ while True:
                 
                 
     if t(9, 45)<t(datetime.now().time().hour, datetime.now().time().minute)<t(15, 20) and now.second == 0 and positions_df.empty :
-        time.sleep(2)
+        time_.sleep(2)
         today = datetime.now().strftime("%Y-%m-%d")
         #yesterday = (datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d")
         i=1
@@ -538,7 +538,7 @@ while True:
                 break
             except:
                 i+=1
-                time.sleep(0.2)
+                time_.sleep(0.2)
                 pass
         
         olhc = data['Success']
