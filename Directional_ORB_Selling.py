@@ -266,7 +266,7 @@ def check_profit_target_and_add_position(positions_df):
                     print(f"Error fetching Nifty spot: {e}")
                     time_.sleep(0.2)
                     i+=1
-                    continue
+                    pass
 
             atm = round(nifty_spot_price / 50) * 50
             global atm_strike
@@ -290,7 +290,7 @@ def check_profit_target_and_add_position(positions_df):
                         print(f"Error fetching Put leg: {e}")
                         i+=1
                         time_.sleep(0.2)
-                        continue
+                        pass
 
                 new_position = {
                     'datetime': now,
@@ -320,7 +320,7 @@ def check_profit_target_and_add_position(positions_df):
                         print(f"Error fetching Call leg: {e}")
                         i+=1
                         time_.sleep(0.2)
-                        continue
+                        pass
 
                 new_position = {
                     'datetime': now,
