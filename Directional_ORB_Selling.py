@@ -152,7 +152,7 @@ def closest_put_otm() :
     
     for strike in strikes:
         print('strike',strike)
-        i=1
+        i=5
         for j in range(i):
             try:
                 leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
@@ -200,7 +200,7 @@ def closest_call_otm():
 
 
     for strike in strikes:
-        i=1
+        i=5
         for j in range(i):
             try:
                 leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
@@ -251,7 +251,7 @@ def check_profit_target_and_add_position(positions_df):
 
         if current_price is not None and ((2.5) < float(current_price) <= target_price):
             current_price=float(current_price)
-            i=1
+            i=5
             for j in range(i):
                 try:
                     nifty_spot_response = breeze.get_quotes(stock_code="NIFTY", exchange_code="NSE",
@@ -275,7 +275,7 @@ def check_profit_target_and_add_position(positions_df):
             if last_position['CE_or_PE'] == 'put':
                 
                 closest_strike_pe = closest_put_otm()
-                i=1
+                i=5
                 for j in range(i):
                     try:
                         leg_response = breeze.get_option_chain_quotes(stock_code="NIFTY", exchange_code="NFO",
@@ -305,7 +305,7 @@ def check_profit_target_and_add_position(positions_df):
 
             else:
                 closest_call_ce = closest_call_otm()
-                i=1
+                i=5
                 for j in range(i):
                     try:
                         leg_response = breeze.get_option_chain_quotes(stock_code="NIFTY", exchange_code="NFO",
@@ -321,7 +321,7 @@ def check_profit_target_and_add_position(positions_df):
                         i+=1
                         time_.sleep(0.2)
                         pass
-
+                
                 new_position = {
                     'datetime': now,
                     'action': 'sell',
@@ -354,7 +354,7 @@ while True:
         time_.sleep(2)
         today = datetime.now().strftime("%Y-%m-%d")
         #yesterday = (datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d")
-        i=0
+        i=1
         for j in range(i):
             try:
                 data = breeze.get_historical_data_v2(interval="5minute",
@@ -386,7 +386,7 @@ while True:
         if last_row['close'] > resistance :
             atm_strike = round(last_row['close']/50) * 50
             closest_strike_pe = closest_put_otm()
-            i=1
+            i=5
             for j in range(i):
                 try:
                     option_data = breeze.get_historical_data_v2(interval="5minute",
@@ -453,7 +453,7 @@ while True:
         if last_row['close'] < support :
             atm_strike = round(last_row['close']/50) * 50
             closest_strike_ce = closest_call_otm()
-            i=1
+            i=5
             for j in range(i):
                 try:
                     option_data = breeze.get_historical_data_v2(interval="5minute",
@@ -523,7 +523,7 @@ while True:
         time_.sleep(2)
         today = datetime.now().strftime("%Y-%m-%d")
         #yesterday = (datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d")
-        i=1
+        i=5
         for j in range(i):
             try:
                 data = breeze.get_historical_data_v2(interval="5minute",
