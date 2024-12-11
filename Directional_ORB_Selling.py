@@ -1,12 +1,11 @@
-# from breeze_connect import BreezeConnect
-# breeze = BreezeConnect(api_key="d96783Qp368558*55FI36Z24W0ET39Lf")
-# import urllib
-# breeze.generate_session(api_secret="58836g597W4l8977h7~%eX9967^807x3",
-#                         session_token="49329030")
+from breeze_connect import BreezeConnect
+breeze = BreezeConnect(api_key="77%U3I71634^099gN232777%316Q~v4=")
+breeze.generate_session(api_secret="9331K77(I8_52JG2K73$5438q95772j@",
+                        session_token="49725230")
 
 
 import numpy as np
-from breeze1 import *
+# from breeze1 import *
 import pandas as pd
 from datetime import datetime, date, timedelta, time as t
 import csv, re, time, math
