@@ -169,10 +169,12 @@ def closest_put_otm() :
                 # print(ltp_value)
                 time_.sleep(0.1)
                 break
-            except:
+            except Exception as e:
+                print("error fetching leg price",e)
+                print(leg)
                 time_.sleep(0.2)
                 i+=1
-                pass
+                
                 
         
         ltps.append({'strike_price': strike, 'ltp': ltp_value})
@@ -214,7 +216,9 @@ def closest_call_otm():
                 leg_df = pd.DataFrame(leg_df)
                 break
 
-            except:
+            except Exception as e:
+                print("error fetching leg price",e)
+                print(leg)
                 time_.sleep(0.2)
                 i+=1
     
