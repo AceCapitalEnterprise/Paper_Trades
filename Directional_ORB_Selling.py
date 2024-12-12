@@ -1,11 +1,11 @@
-from breeze_connect import BreezeConnect
-breeze = BreezeConnect(api_key="77%U3I71634^099gN232777%316Q~v4=")
-breeze.generate_session(api_secret="9331K77(I8_52JG2K73$5438q95772j@",
-                        session_token="49725230")
+# from breeze_connect import BreezeConnect
+# breeze = BreezeConnect(api_key="77%U3I71634^099gN232777%316Q~v4=")
+# breeze.generate_session(api_secret="9331K77(I8_52JG2K73$5438q95772j@",
+#                         session_token="49725230")
 
 
 import numpy as np
-# from breeze1 import *
+from breeze1 import *
 import pandas as pd
 from datetime import datetime, date, timedelta, time as t
 import csv, re, time, math
@@ -20,7 +20,7 @@ time_1 = t(9, 30)
 time_2 = t(15, 30)
 order = 0
 atm_strike=None
-expiry = '2024-12-12'
+expiry = '2024-12-12'      
 expiry1 = '12-Dec-2024'
 fut_expiry = '2024-12-26'
 
