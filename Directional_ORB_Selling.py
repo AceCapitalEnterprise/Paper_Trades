@@ -20,8 +20,8 @@ time_1 = t(9, 30)
 time_2 = t(15, 30)
 order = 0
 atm_strike=None
-expiry = '2024-12-12'      
-expiry1 = '12-Dec-2024'
+expiry = '2024-12-19'      
+expiry1 = '19-Dec-2024'
 fut_expiry = '2024-12-26'
 
 SL = 5
