@@ -537,13 +537,14 @@ while True:
                                                      expiry_date=f'{fut_expiry}T07:00:00.000Z',
                                                      right="others",
                                                      strike_price="0")
+                olhc = data['Success']
                 break
             except:
                 i+=1
                 time_.sleep(0.2)
-                pass
+                # pass
         
-        olhc = data['Success']
+        
         olhc = pd.DataFrame(olhc)
         olhc['datetime'] = pd.to_datetime(olhc['datetime'])
         olhc = olhc[(olhc['datetime'].dt.time >= pd.to_datetime('09:15').time()) &
