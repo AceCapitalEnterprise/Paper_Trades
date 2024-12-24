@@ -360,7 +360,8 @@ def check_profit_target_and_add_position(positions_df):
     return positions_df
 
 
-while True:            
+while True:  
+    now = datetime.now()
     if t(9, 45)<t(datetime.now().time().hour, datetime.now().time().minute)<t(15, 20) and now.second == 0 and positions_df_pe.empty :
         time_.sleep(2)
         today = datetime.now().strftime("%Y-%m-%d")
@@ -560,9 +561,9 @@ while True:
                     
     if not positions_df_pe.empty:
         import time,os
-        
-        positions_df_pe = update_trailing_sl(positions_df_pe)
-        positions_df_pe = check_profit_target_and_add_position(positions_df_pe)
+        positions_df = positions_df_pe
+        positions_df_pe = update_trailing_sl(positions_df)
+        positions_df_pe = check_profit_target_and_add_position(positions_df)
         if now.time() >= t(15, 20):
             path="unclosed_positions_directional_pe.csv"
             # if os.path.exists(path):
@@ -578,9 +579,9 @@ while True:
 
     if not positions_df_ce.empty:
         import time,os
-        
-        positions_df_ce = update_trailing_sl(positions_df_ce)
-        positions_df_ce = check_profit_target_and_add_position(positions_df_ce)
+        positions_df = positions_df_ce
+        positions_df_ce = update_trailing_sl(positions_df)
+        positions_df_ce = check_profit_target_and_add_position(positions_df)
         if now.time() >= t(15, 20):
             path="unclosed_positions_directional_ce.csv"
             # if os.path.exists(path):
