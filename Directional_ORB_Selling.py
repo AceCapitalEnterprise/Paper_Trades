@@ -1,11 +1,10 @@
-# from breeze_connect import BreezeConnect
-# breeze = BreezeConnect(api_key="77%U3I71634^099gN232777%316Q~v4=")
-# breeze.generate_session(api_secret="9331K77(I8_52JG2K73$5438q95772j@",
-#                         session_token="49725230")
+from breeze_connect import BreezeConnect
+breeze = BreezeConnect(api_key="77%U3I71634^099gN232777%316Q~v4=")
+breeze.generate_session(api_secret="9331K77(I8_52JG2K73$5438q95772j@",
+                         session_token="50077013")
 
 
 import numpy as np
-from breeze1 import *
 import pandas as pd
 from datetime import datetime, date, timedelta, time as t
 import csv, re, time, math
@@ -27,6 +26,7 @@ fut_expiry = '2025-01-30'
 SL = 5
 today = datetime.now().strftime("%Y-%m-%d")
 one_tick=None
+
 
 breeze.ws_connect()
 
@@ -154,13 +154,11 @@ def update_trailing_sl(positions_df):
 
 
 def closest_put_otm() :
-    print('atm_strike',atm_strike)
     strikes = [atm_strike-50, atm_strike-100, atm_strike-150, atm_strike-200, atm_strike-250, atm_strike-300, atm_strike-350, atm_strike-400, atm_strike-450, atm_strike-500, atm_strike-550, atm_strike-600, atm_strike-650, atm_strike-700, atm_strike-750, atm_strike-800, atm_strike-850, atm_strike-900,atm_strike-950,atm_strike-1000,atm_strike-1050]
             
     ltps = []
     
     for strike in strikes:
-        print('strike',strike)
         i=5
         for j in range(i):
             try:
@@ -360,6 +358,8 @@ def check_profit_target_and_add_position(positions_df):
     return positions_df
 
 
+
+
 while True:  
     now = datetime.now()
     if t(9, 45)<t(datetime.now().time().hour, datetime.now().time().minute)<t(15, 20) and now.second == 0 and positions_df_pe.empty :
@@ -438,7 +438,7 @@ while True:
                 }
                 
                 positions.append(position)
-                positions_df_ce = pd.DataFrame(positions)
+                positions_df_pe = pd.DataFrame(positions)
 
                 initiate_ws('put',closest_strike_pe)
                 time_.sleep(3)
@@ -561,9 +561,8 @@ while True:
                     
     if not positions_df_pe.empty:
         import time,os
-        positions_df = positions_df_pe
-        positions_df_pe = update_trailing_sl(positions_df)
-        positions_df_pe = check_profit_target_and_add_position(positions_df)
+        positions_df_pe = update_trailing_sl(positions_df_pe)
+        positions_df_pe = check_profit_target_and_add_position(positions_df_pe)
         if now.time() >= t(15, 20):
             path="unclosed_positions_directional_pe.csv"
             # if os.path.exists(path):
@@ -579,9 +578,8 @@ while True:
 
     if not positions_df_ce.empty:
         import time,os
-        positions_df = positions_df_ce
-        positions_df_ce = update_trailing_sl(positions_df)
-        positions_df_ce = check_profit_target_and_add_position(positions_df)
+        positions_df_ce = update_trailing_sl(positions_df_ce)
+        positions_df_ce = check_profit_target_and_add_position(positions_df_ce)
         if now.time() >= t(15, 20):
             path="unclosed_positions_directional_ce.csv"
             # if os.path.exists(path):
