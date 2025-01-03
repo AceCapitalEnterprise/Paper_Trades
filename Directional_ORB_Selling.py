@@ -1,7 +1,7 @@
 from breeze_connect import BreezeConnect
 breeze = BreezeConnect(api_key="77%U3I71634^099gN232777%316Q~v4=")
 breeze.generate_session(api_secret="9331K77(I8_52JG2K73$5438q95772j@",
-                         session_token="50077013")
+                         session_token="50098981")
 
 
 import numpy as np
@@ -19,8 +19,8 @@ time_1 = t(9, 30)
 time_2 = t(15, 30)
 order = 0
 atm_strike=None
-expiry = '2025-01-02'      
-expiry1 = '02-Jan-2025'
+expiry = '2025-01-09'      
+expiry1 = '09-Jan-2025'
 fut_expiry = '2025-01-30'
 
 SL = 5
