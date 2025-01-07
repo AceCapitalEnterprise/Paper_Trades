@@ -115,6 +115,39 @@ def get_current_market_price(CE_or_PE, strike_price):
             return current_price
     return None
 
+def exit_positions_expiry(positions_df,path):
+    positions_to_exit = []
+
+    for index, position in positions_df.iterrows():
+        current_price = get_current_market_price(position['CE_or_PE'], position['strike'])
+
+        
+        if current_price is not None:
+            current_price=float(current_price)
+            positions_to_exit.append(index)
+            time = datetime.now().strftime('%H:%M:%S')
+            print('position exit')
+            deactivate_ws(position['CE_or_PE'], position['strike'])
+            csv_file = "Directional_selling.csv"
+            try:
+                with open(csv_file, 'x', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow(['Date', 'Time', 'Strike', 'CE/PE', 'Buy/Sell', 'Premium'])
+            except FileExistsError:
+                pass
+                with open(csv_file, 'a', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow([today, time, position['strike'], position['CE_or_PE'], 'Buy', -(current_price)])
+
+        # elif current_price is not None and float(current_price) < position['trailing_sl'] - position['premium']:
+        #     current_price=float(current_price)
+        #     positions_df.at[index, 'trailing_sl'] = current_price + position['premium']
+            
+    for index in positions_to_exit:
+        positions_df.drop(index, inplace=True)
+        positions_df.to_csv(path,header=True,index=False)
+
+    return positions_df
 
 
 
@@ -364,6 +397,7 @@ def check_profit_target_and_add_position(positions_df,path):
 
 while True:  
     now = datetime.now()
+    today = datetime.now().strftime("%Y-%m-%d")
     if t(9, 45)<t(datetime.now().time().hour, datetime.now().time().minute)<t(15, 20) and now.second == 0 and positions_df_pe.empty :
         time_.sleep(2)
         today = datetime.now().strftime("%Y-%m-%d")
@@ -558,6 +592,10 @@ while True:
                 print(now, 'no decay in option chart')
         else:
             print(now, 'Market in range')
+    if expiry==today and t(datetime.now().time().hour, datetime.now().time().minute)>t(15, 20):
+      positions_df_ce=exit_positions_expiry(positions_df_ce,path_ce)
+      positions_df_pe=exit_positions_expiry(positions_df_pe,path_pe)
+      
             
             
                     
