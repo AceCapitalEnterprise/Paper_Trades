@@ -6,7 +6,7 @@ breeze.generate_session(api_secret="9331K77(I8_52JG2K73$5438q95772j@",
 
 import numpy as np
 import pandas as pd
-from datetime import datetime, date, timedelta, time as t
+from datetime import datetime, date, timedelta, time as t 
 import csv, re, time, math
 import time as time_
 import os
@@ -73,9 +73,9 @@ def deactivate_ws(CE_or_PE,strike_price):
     print(leg)
 
 
-path="unclosed_positions_directional_ce.csv"
-if os.path.exists(path):
-    positions_df_ce=pd.read_csv(path)
+path_ce="unclosed_positions_directional_ce.csv"
+if os.path.exists(path_ce):
+    positions_df_ce=pd.read_csv(path_ce)
     if not positions_df_ce.empty:
         for _,row in positions_df_ce.iterrows():
             initiate_ws(row['CE_or_PE'],row['strike'])
@@ -85,9 +85,9 @@ else:
     positions = []
     positions_df_ce = pd.DataFrame(columns=['datetime', 'action', 'strike', 'premium', 'trailing_sl'])
 
-path="unclosed_positions_directional_pe.csv"
-if os.path.exists(path):
-    positions_df_pe=pd.read_csv(path)
+path_pe="unclosed_positions_directional_pe.csv"
+if os.path.exists(path_pe):
+    positions_df_pe=pd.read_csv(path_pe)
     if not positions_df_pe.empty:
         for _,row in positions_df_pe.iterrows():
             initiate_ws(row['CE_or_PE'],row['strike'])
@@ -118,7 +118,7 @@ def get_current_market_price(CE_or_PE, strike_price):
 
 
 
-def update_trailing_sl(positions_df):
+def update_trailing_sl(positions_df,path):
     positions_to_exit = []
 
     for index, position in positions_df.iterrows():
@@ -148,6 +148,7 @@ def update_trailing_sl(positions_df):
             
     for index in positions_to_exit:
         positions_df.drop(index, inplace=True)
+        positions_df.to_csv(path,header=True,index=False)
 
     return positions_df
 
@@ -248,7 +249,7 @@ def closest_call_otm():
 
 
 
-def check_profit_target_and_add_position(positions_df):
+def check_profit_target_and_add_position(positions_df,path):
     
     if not positions_df.empty:
         last_position = positions_df.iloc[-1]
@@ -350,6 +351,7 @@ def check_profit_target_and_add_position(positions_df):
             # Create DataFrame for new position and concatenate
             new_position_df = pd.DataFrame([new_position])
             positions_df = pd.concat([positions_df, new_position_df], ignore_index=True)
+            positions_df.to_csv(path,header=True,index=False)
             print(f"New Position Added: {new_position}")
 
         # Debug: Print the updated positions_df
@@ -439,7 +441,7 @@ while True:
                 
                 positions.append(position)
                 positions_df_pe = pd.DataFrame(positions)
-
+                positions_df_pe.to_csv(path_pe,header=True,index=False)
                 initiate_ws('put',closest_strike_pe)
                 time_.sleep(3)
                 print('SELL', closest_strike_pe, 'PUT at', entry_premium)
@@ -536,7 +538,7 @@ while True:
                 positions.append(position)
 
                 positions_df_ce = pd.DataFrame(positions)
-
+                positions_df_ce.to_csv(path_ce,header=True,index=False)
                 initiate_ws('call',closest_strike_ce)
                 time_.sleep(4)
                 print('SELL', closest_strike_ce, 'CALL at', entry_premium)
@@ -562,16 +564,16 @@ while True:
     if not positions_df_pe.empty:
         import time,os
         positions_df_pe = update_trailing_sl(positions_df_pe)
-        positions_df_pe = check_profit_target_and_add_position(positions_df_pe)
+        positions_df_pe = check_profit_target_and_add_position(positions_df_pe,path_pe)
         if now.time() >= t(15, 20):
-            path="unclosed_positions_directional_pe.csv"
+            path_pe="unclosed_positions_directional_pe.csv"
             # if os.path.exists(path):
 
             #     positions_df.to_csv(csv_file,header=False,mode='a',index=False)
             # else:
-            positions_df_pe.to_csv(path,header=True,index=False)
+            positions_df_pe.to_csv(path_pe,header=True,index=False)
             print("All open Positions Saved and Market closed")
-            quit()
+            
         time_.sleep(1)
         print(now)  
 
@@ -579,14 +581,14 @@ while True:
     if not positions_df_ce.empty:
         import time,os
         positions_df_ce = update_trailing_sl(positions_df_ce)
-        positions_df_ce = check_profit_target_and_add_position(positions_df_ce)
+        positions_df_ce = check_profit_target_and_add_position(positions_df_ce,path_ce)
         if now.time() >= t(15, 20):
-            path="unclosed_positions_directional_ce.csv"
+            path_ce="unclosed_positions_directional_ce.csv"
             # if os.path.exists(path):
 
             #     positions_df.to_csv(csv_file,header=False,mode='a',index=False)
             # else:
-            positions_df_ce.to_csv(path,header=True,index=False)
+            positions_df_ce.to_csv(path_ce,header=True,index=False)
             print("All open Positions Saved and Market closed")
             quit()
         time_.sleep(1)
