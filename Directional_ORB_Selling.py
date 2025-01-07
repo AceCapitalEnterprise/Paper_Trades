@@ -592,7 +592,7 @@ while True:
                 print(now, 'no decay in option chart')
         else:
             print(now, 'Market in range')
-    if expiry==today and t(datetime.now().time().hour, datetime.now().time().minute)>t(15, 20):
+    if expiry==today and t(datetime.now().time().hour, datetime.now().time().minute)>=t(15, 28):
       positions_df_ce=exit_positions_expiry(positions_df_ce,path_ce)
       positions_df_pe=exit_positions_expiry(positions_df_pe,path_pe)
       
