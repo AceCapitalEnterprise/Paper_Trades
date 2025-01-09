@@ -293,7 +293,7 @@ def check_profit_target_and_add_position(positions_df,path):
         target_price = last_position['premium'] * 0.75
         print(f"Current Price: {current_price}, Target Price: {target_price}")
 
-        if current_price is not None and ((2.5) < float(current_price) <= target_price):
+        if current_price is not None and (float(current_price) <= target_price):
             current_price=float(current_price)
             i=5
             for j in range(i):
@@ -382,10 +382,14 @@ def check_profit_target_and_add_position(positions_df,path):
                 writer.writerow([today, datetime.now().strftime('%H:%M:%S'), new_position['strike'], new_position['CE_or_PE'], 'Sell', leg_price])
 
             # Create DataFrame for new position and concatenate
-            new_position_df = pd.DataFrame([new_position])
-            positions_df = pd.concat([positions_df, new_position_df], ignore_index=True)
-            positions_df.to_csv(path,header=True,index=False)
-            print(f"New Position Added: {new_position}")
+            if leg_price<10:
+              new_position_df = pd.DataFrame([new_position])
+              positions_df = pd.concat([positions_df, new_position_df], ignore_index=True)
+              positions_df.to_csv(path,header=True,index=False)
+              print(f"New Position Added: {new_position}")
+            else:
+              print("Premium is less than 10")
+          
 
         # Debug: Print the updated positions_df
         print(positions_df)
