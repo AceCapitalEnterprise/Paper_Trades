@@ -196,7 +196,7 @@ def leg_option_data(right,expiry,strike_price,retries=5):
                                                         product_type="options",
                                                         expiry_date=f'{expiry}T06:00:00.000Z',
                                                         right=right,
-                                                        strike_price=strike)
+                                                        strike_price=strike_price)
         
         if data['Status'] == 200:
             data = data['Success']
