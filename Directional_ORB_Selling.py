@@ -226,7 +226,7 @@ def closest_put_otm() :
                                                                 exchange_code="NFO",
                                                                 product_type="options",
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
-                                                                right="call",
+                                                                right="put",
                                                                 strike_price=strike)
                         # print('leg',leg)
                 time.sleep(0.2)
