@@ -474,7 +474,7 @@ while True:
             sup = cand['low'].min()
             last = option_data.iloc[-1]
             
-            if last['close'] <= sup :
+            if last['close'] <= sup and last['close'] >= 10 :
                 initial_point = 0
                 order = 1
                 time = datetime.now().strftime('%H:%M:%S')
@@ -570,7 +570,7 @@ while True:
             sup = cand['low'].min()
             last = option_data.iloc[-1]
             
-            if last['close'] <= sup :
+            if last['close'] <= sup and last['close'] >= 10 :
                 initial_point = 0
                 order = -1
                 time = datetime.now().strftime('%H:%M:%S')
