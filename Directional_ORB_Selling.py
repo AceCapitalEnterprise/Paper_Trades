@@ -187,25 +187,24 @@ def update_trailing_sl(positions_df,path):
     return positions_df
 
 
-def leg_option_data(right,expiry2,strike_price):
-    # if retries <= 0:
-    #     raise Exception("Failed to fetch data after multiple retries.")
+# def leg_option_data(right,expiry2,strike_price):
+#     # if retries <= 0:
+#     #     raise Exception("Failed to fetch data after multiple retries.")
     
-    
-      data = breeze.get_option_chain_quotes(stock_code="NIFTY",
-                                                      exchange_code="NFO",
-                                                      product_type="options",
-                                                      expiry_date=f'{expiry2}T06:00:00.000Z',
-                                                      right=right,
-                                                      strike_price=strike_price)
-      
-      if data is not None:
-          data = data['Success']
-          return data
-      else:
-          print(data)
-          print("Retrying due to non-200 status...")
-          return leg_option_data(right,expiry2,strike_price)
+#     try:
+#         data = breeze.get_option_chain_quotes(stock_code="NIFTY",
+#                                                         exchange_code="NFO",
+#                                                         product_type="options",
+#                                                         expiry_date=f'{expiry2}T06:00:00.000Z',
+#                                                         right=right,
+#                                                         strike_price=strike_price)
+        
+#         if data['Status'] == 200:
+#             data = data['Success']
+#             return data
+#         else:
+#             print("Retrying due to non-200 status...")
+#             return leg_option_data(right,expiry2,strike_price)
 
     # except Exception as e:
     #     print(f"Error occurred: {e}. Retrying...")
@@ -220,15 +219,20 @@ def closest_put_otm() :
     ltps = []
     
     for strike in strikes:
-      # leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
-      #                                                   exchange_code="NFO",
-      #                                                   product_type="options",
-      #                                                   expiry_date=f'{expiry}T06:00:00.000Z',
-      #                                                   right="put",
-      #                                                   strike_price=strike)
-                # print('leg',leg)
-                
-        leg_df = leg_option_data(right="put",strike_price=strike,expiry2=expiry)
+        for i in range(5):
+            try:
+                leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
+                                                                exchange_code="NFO",
+                                                                product_type="options",
+                                                                expiry_date=f'{expiry}T06:00:00.000Z',
+                                                                right="put",
+                                                                strike_price=strike)
+                        # print('leg',leg)
+                        
+                leg_df = leg['Success']
+                break
+            except Exception as e:
+                print(f"Error while fetching leg data {e}")
         leg_df = pd.DataFrame(leg_df)
         ltp_value = float(leg_df['ltp'])
         
@@ -264,8 +268,23 @@ def closest_call_otm():
       #                                           expiry_date=f'{expiry}T06:00:00.000Z',
       #                                           right="call",
       #                                           strike_price=strike)
+
+      for i in range(5):
+            try:
+                leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
+                                                                exchange_code="NFO",
+                                                                product_type="options",
+                                                                expiry_date=f'{expiry}T06:00:00.000Z',
+                                                                right="call",
+                                                                strike_price=strike)
+                        # print('leg',leg)
+                        
+                leg_df = leg['Success']
+                break
+            except Exception as e:
+                print(f"Error while fetching leg data {e}")
     
-      leg_df = leg_option_data(right="call",strike_price=strike,expiry2=expiry)
+    #   leg_df = leg_option_data(right="call",strike_price=strike,expiry2=expiry)
       leg_df = pd.DataFrame(leg_df)
       ltp_value = float(leg_df['ltp'])
       ltps.append({'strike_price': strike, 'ltp': ltp_value})
@@ -324,10 +343,10 @@ def check_profit_target_and_add_position(positions_df,path):
                 
                 closest_strike_pe = closest_put_otm()
 
-                # leg_response = breeze.get_option_chain_quotes(stock_code="NIFTY", exchange_code="NFO",
-                #                                               product_type="options", expiry_date=f'{expiry}T06:00:00.000Z',
-                #                                               right="put", strike_price=closest_strike_pe)
-                leg = leg_option_data(right="put",strike_price=closest_strike_pe,expiry2=expiry)
+                leg_response = breeze.get_option_chain_quotes(stock_code="NIFTY", exchange_code="NFO",
+                                                              product_type="options", expiry_date=f'{expiry}T06:00:00.000Z',
+                                                              right="put", strike_price=closest_strike_pe)
+                leg = leg_response['Success']
                 leg = pd.DataFrame(leg)
                 leg_price = float(leg['ltp'][0])
                 print(f"Leg Price for Put: {leg_price}")
@@ -347,10 +366,10 @@ def check_profit_target_and_add_position(positions_df,path):
             else:
                 closest_call_ce = closest_call_otm()
 
-                # leg_response = breeze.get_option_chain_quotes(stock_code="NIFTY", exchange_code="NFO",
-                #                                               product_type="options", expiry_date=f'{expiry}T06:00:00.000Z',
-                #                                               right="call", strike_price=closest_call_ce)
-                leg = leg_option_data(right="call",strike_price=closest_call_ce,expiry2=expiry)
+                leg_response = breeze.get_option_chain_quotes(stock_code="NIFTY", exchange_code="NFO",
+                                                              product_type="options", expiry_date=f'{expiry}T06:00:00.000Z',
+                                                              right="call", strike_price=closest_call_ce)
+                leg = leg_response['Success']
                 leg = pd.DataFrame(leg)
                 leg_price = float(leg['ltp'][0])
                 print(f"Leg Price for Call: {leg_price}")
