@@ -233,6 +233,7 @@ def closest_put_otm() :
                 break
             except Exception as e:
                 print(f"Error while fetching leg data {e}")
+                time.sleep(1)
         leg_df = pd.DataFrame(leg_df)
         ltp_value = float(leg_df['ltp'])
         
@@ -283,6 +284,7 @@ def closest_call_otm():
                 break
             except Exception as e:
                 print(f"Error while fetching leg data {e}")
+                time.sleep(1)
     
     #   leg_df = leg_option_data(right="call",strike_price=strike,expiry2=expiry)
       leg_df = pd.DataFrame(leg_df)
