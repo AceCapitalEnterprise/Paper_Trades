@@ -191,25 +191,26 @@ def leg_option_data(right,expiry2,strike_price):
     # if retries <= 0:
     #     raise Exception("Failed to fetch data after multiple retries.")
     
-    try:
-        data = breeze.get_option_chain_quotes(stock_code="NIFTY",
-                                                        exchange_code="NFO",
-                                                        product_type="options",
-                                                        expiry_date=f'{expiry2}T06:00:00.000Z',
-                                                        right=right,
-                                                        strike_price=strike_price)
-        
-        if data['Status'] == 200:
-            data = data['Success']
-            return data
-        else:
-            print("Retrying due to non-200 status...")
-            return leg_option_data(right,expiry2,strike_price)
+    
+      data = breeze.get_option_chain_quotes(stock_code="NIFTY",
+                                                      exchange_code="NFO",
+                                                      product_type="options",
+                                                      expiry_date=f'{expiry2}T06:00:00.000Z',
+                                                      right=right,
+                                                      strike_price=strike_price)
+      
+      if data is not None:
+          data = data['Success']
+          return data
+      else:
+          print(data)
+          print("Retrying due to non-200 status...")
+          return leg_option_data(right,expiry2,strike_price)
 
-    except Exception as e:
-        print(f"Error occurred: {e}. Retrying...")
-        time.sleep(1)
-        return leg_option_data(right,expiry2,strike_price)
+    # except Exception as e:
+    #     print(f"Error occurred: {e}. Retrying...")
+    #     time.sleep(1)
+    #     return leg_option_data(right,expiry2,strike_price)
 
 
 
