@@ -255,6 +255,7 @@ def closest_call_otm():
 
 
     for strike in strikes:
+      
       # leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
       #                                           exchange_code="NFO",
       #                                           product_type="options",
@@ -262,7 +263,7 @@ def closest_call_otm():
       #                                           right="call",
       #                                           strike_price=strike)
     
-      leg_df = leg_df = leg_option_data(right="call",strike_price=strike,expiry=expiry)
+      leg_df = leg_option_data(right="call",strike_price=strike,expiry=expiry)
       leg_df = pd.DataFrame(leg_df)
       ltp_value = float(leg_df['ltp'])
       ltps.append({'strike_price': strike, 'ltp': ltp_value})
