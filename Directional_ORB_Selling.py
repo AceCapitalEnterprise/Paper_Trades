@@ -203,12 +203,12 @@ def leg_option_data(right,expiry,strike_price,retries=5):
             return data
         else:
             print("Retrying due to non-200 status...")
-            return one_minute_data(retries - 1)
+            return leg_option_data(right,expiry,strike_price,retries - 1)
 
     except Exception as e:
         print(f"Error occurred: {e}. Retrying...")
         time.sleep(1)
-        return leg_option_data(retries - 1)
+        return leg_option_data(right,expiry,strike_price,retries - 1)
 
 
 
