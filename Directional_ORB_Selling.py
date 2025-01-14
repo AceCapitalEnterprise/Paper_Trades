@@ -219,24 +219,28 @@ def closest_put_otm() :
     ltps = []
     
     for strike in strikes:
-        for i in range(5):
+        check = True
+        while check:
             try:
                 leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
                                                                 exchange_code="NFO",
                                                                 product_type="options",
                                                                 expiry_date=f'{expiry}T06:00:00.000Z',
-                                                                right="put",
+                                                                right="call",
                                                                 strike_price=strike)
                         # print('leg',leg)
-                        
-                leg_df = leg['Success']
-                break
+                time.sleep(0.1)
+                if leg['Status']==200:
+                    leg_df = leg['Success']
+                    break
+
             except Exception as e:
                 print(f"Error while fetching leg data {e}")
-                time.sleep(1)
+                # time.sleep(1)
+    
+    #   leg_df = leg_option_data(right="call",strike_price=strike,expiry2=expiry)
         leg_df = pd.DataFrame(leg_df)
         ltp_value = float(leg_df['ltp'])
-        
         ltps.append({'strike_price': strike, 'ltp': ltp_value})
                     
 
@@ -269,8 +273,8 @@ def closest_call_otm():
       #                                           expiry_date=f'{expiry}T06:00:00.000Z',
       #                                           right="call",
       #                                           strike_price=strike)
-
-      for i in range(5):
+        check = True
+        while check:
             try:
                 leg = breeze.get_option_chain_quotes(stock_code="NIFTY",
                                                                 exchange_code="NFO",
@@ -279,17 +283,19 @@ def closest_call_otm():
                                                                 right="call",
                                                                 strike_price=strike)
                         # print('leg',leg)
-                        
-                leg_df = leg['Success']
-                break
+                time.sleep(0.1)
+                if leg['Status']==200:
+                    leg_df = leg['Success']
+                    break
+
             except Exception as e:
                 print(f"Error while fetching leg data {e}")
-                time.sleep(1)
+                
     
     #   leg_df = leg_option_data(right="call",strike_price=strike,expiry2=expiry)
-      leg_df = pd.DataFrame(leg_df)
-      ltp_value = float(leg_df['ltp'])
-      ltps.append({'strike_price': strike, 'ltp': ltp_value})
+        leg_df = pd.DataFrame(leg_df)
+        ltp_value = float(leg_df['ltp'])
+        ltps.append({'strike_price': strike, 'ltp': ltp_value})
                     
 
     target_ltp = 12
