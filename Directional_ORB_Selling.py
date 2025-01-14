@@ -229,10 +229,10 @@ def closest_put_otm() :
                                                                 right="call",
                                                                 strike_price=strike)
                         # print('leg',leg)
-                time.sleep(0.1)
+                time.sleep(0.2)
                 if leg['Status']==200:
-                    leg_df = leg['Success']
-                    break
+                  leg_df = leg['Success']
+                break
 
             except Exception as e:
                 print(f"Error while fetching leg data {e}")
@@ -283,10 +283,10 @@ def closest_call_otm():
                                                                 right="call",
                                                                 strike_price=strike)
                         # print('leg',leg)
-                time.sleep(0.1)
+                time.sleep(0.2)
                 if leg['Status']==200:
-                    leg_df = leg['Success']
-                    break
+                  leg_df = leg['Success']
+                break
 
             except Exception as e:
                 print(f"Error while fetching leg data {e}")
@@ -392,17 +392,17 @@ def check_profit_target_and_add_position(positions_df,path):
                 }
                 initiate_ws(new_position['CE_or_PE'],closest_call_ce)
                 time_.sleep(4)
-            csv_file='Directional_selling.csv'
-            with open(csv_file, 'a', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerow([today, datetime.now().strftime('%H:%M:%S'), new_position['strike'], new_position['CE_or_PE'], 'Sell', leg_price])
-
+             
             # Create DataFrame for new position and concatenate
-            if leg_price<10:
+            if leg_price>10:
               new_position_df = pd.DataFrame([new_position])
               positions_df = pd.concat([positions_df, new_position_df], ignore_index=True)
               positions_df.to_csv(path,header=True,index=False)
               print(f"New Position Added: {new_position}")
+              csv_file='Directional_selling.csv'
+              with open(csv_file, 'a', newline='') as file:
+                  writer = csv.writer(file)
+                  writer.writerow([today, datetime.now().strftime('%H:%M:%S'), new_position['strike'], new_position['CE_or_PE'], 'Sell', leg_price])
             else:
               print("Premium is less than 10")
           
