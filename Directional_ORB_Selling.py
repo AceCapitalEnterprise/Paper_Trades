@@ -229,7 +229,7 @@ def closest_put_otm() :
                                                                 right="put",
                                                                 strike_price=strike)
                         # print('leg',leg)
-                time.sleep(0.2)
+                time.sleep(0.5)
                 if leg['Status']==200:
                   leg_df = leg['Success']
                 break
@@ -283,7 +283,7 @@ def closest_call_otm():
                                                                 right="call",
                                                                 strike_price=strike)
                         # print('leg',leg)
-                time.sleep(0.2)
+                time.sleep(0.5)
                 if leg['Status']==200:
                   leg_df = leg['Success']
                 break
