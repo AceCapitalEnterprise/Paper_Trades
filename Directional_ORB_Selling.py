@@ -373,11 +373,15 @@ def check_profit_target_and_add_position(positions_df,path):
 
             else:
                 closest_call_ce = closest_call_otm()
-
-                leg_response = breeze.get_option_chain_quotes(stock_code="NIFTY", exchange_code="NFO",
-                                                              product_type="options", expiry_date=f'{expiry}T06:00:00.000Z',
-                                                              right="call", strike_price=closest_call_ce)
-                leg = leg_response['Success']
+                for i in range(5):
+                  
+                  leg_response = breeze.get_option_chain_quotes(stock_code="NIFTY", exchange_code="NFO",
+                                                                product_type="options", expiry_date=f'{expiry}T06:00:00.000Z',
+                                                                right="call", strike_price=closest_call_ce)
+                  if leg_response['Status']==200:
+                    leg = leg_response['Success']
+                    break
+                  time.sleep(0.4)
                 leg = pd.DataFrame(leg)
                 leg_price = float(leg['ltp'][0])
                 print(f"Leg Price for Call: {leg_price}")
