@@ -350,11 +350,14 @@ def check_profit_target_and_add_position(positions_df,path):
             if last_position['CE_or_PE'] == 'put':
                 
                 closest_strike_pe = closest_put_otm()
-
-                leg_response = breeze.get_option_chain_quotes(stock_code="NIFTY", exchange_code="NFO",
+                for i in range(5):
+                  leg_response = breeze.get_option_chain_quotes(stock_code="NIFTY", exchange_code="NFO",
                                                               product_type="options", expiry_date=f'{expiry}T06:00:00.000Z',
                                                               right="put", strike_price=closest_strike_pe)
-                leg = leg_response['Success']
+                  if leg_response['Status']==200:
+                    leg = leg_response['Success']
+                    break
+                  time.sleep(1)
                 leg = pd.DataFrame(leg)
                 leg_price = float(leg['ltp'][0])
                 print(f"Leg Price for Put: {leg_price}")
