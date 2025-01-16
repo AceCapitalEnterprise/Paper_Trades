@@ -368,8 +368,9 @@ def check_profit_target_and_add_position(positions_df,path):
                     'premium': leg_price,
                     'trailing_sl': 2*leg_price
                 }
-                initiate_ws(new_position['CE_or_PE'],closest_strike_pe)
-                time_.sleep(4)
+                if leg_price>10:
+                  initiate_ws(new_position['CE_or_PE'],closest_strike_pe)
+                  time_.sleep(4)
 
             else:
                 closest_call_ce = closest_call_otm()
@@ -381,7 +382,7 @@ def check_profit_target_and_add_position(positions_df,path):
                   if leg_response['Status']==200:
                     leg = leg_response['Success']
                     break
-                  time.sleep(0.5)
+                  time.sleep(1)
                 leg = pd.DataFrame(leg)
                 leg_price = float(leg['ltp'][0])
                 print(f"Leg Price for Call: {leg_price}")
@@ -394,8 +395,9 @@ def check_profit_target_and_add_position(positions_df,path):
                     'premium': leg_price,
                     'trailing_sl': 2*leg_price
                 }
-                initiate_ws(new_position['CE_or_PE'],closest_call_ce)
-                time_.sleep(4)
+                if leg_price>10:
+                  initiate_ws(new_position['CE_or_PE'],closest_call_ce)
+                  time_.sleep(4)
              
             # Create DataFrame for new position and concatenate
             if leg_price>10:
