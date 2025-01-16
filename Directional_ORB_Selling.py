@@ -357,7 +357,7 @@ def check_profit_target_and_add_position(positions_df,path):
                   if leg_response['Status']==200:
                     leg = leg_response['Success']
                     break
-                  time.sleep(1)
+                  time.sleep(1.5)
                 leg = pd.DataFrame(leg)
                 leg_price = float(leg['ltp'][0])
                 print(f"Leg Price for Put: {leg_price}")
