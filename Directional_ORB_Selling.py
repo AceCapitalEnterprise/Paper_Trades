@@ -635,6 +635,7 @@ while True:
     if not positions_df_pe.empty:
         import time,os
         positions_df_pe = update_trailing_sl(positions_df_pe,path_pe)
+        print(positions_df_pe)
         # positions_df_pe = check_profit_target_and_add_position(positions_df_pe,path_pe)
         if now.time() >= t(15, 20):
             path_pe="unclosed_positions_directional_pe.csv"
@@ -652,6 +653,7 @@ while True:
     if not positions_df_ce.empty:
         import time,os
         positions_df_ce = update_trailing_sl(positions_df_ce,path_ce)
+        print(positions_df_ce)
         # positions_df_ce = check_profit_target_and_add_position(positions_df_ce,path_ce)
         if now.time() >= t(15, 20):
             path_ce="unclosed_positions_directional_ce.csv"
