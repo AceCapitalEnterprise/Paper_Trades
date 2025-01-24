@@ -21,8 +21,8 @@ time_1 = t(9, 30)
 time_2 = t(15, 30)
 order = 0
 atm_strike=None
-expiry = '2025-01-23'      
-expiry1 = '23-Jan-2025'
+expiry = '2025-01-30'      
+expiry1 = '30-Jan-2025'
 fut_expiry = '2025-01-30'
 
 SL = 5
