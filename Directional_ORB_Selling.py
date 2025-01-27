@@ -24,6 +24,7 @@ atm_strike=None
 expiry = '2025-01-30'      
 expiry1 = '30-Jan-2025'
 fut_expiry = '2025-01-30'
+adding_pos = True
 
 SL = 5
 today = datetime.now().strftime("%Y-%m-%d")
@@ -326,7 +327,7 @@ def check_profit_target_and_add_position(positions_df,path):
         target_price = last_position['premium'] * 0.75
         print(f"Current Price: {current_price}, Target Price: {target_price}")
 
-        if current_price is not None and (float(current_price) <= target_price):
+        if current_price is not None and (float(current_price) <= target_price) and adding_pos is True :
             current_price=float(current_price)
             i=5
             for j in range(i):
@@ -374,7 +375,7 @@ def check_profit_target_and_add_position(positions_df,path):
                     'premium': leg_price,
                     'trailing_sl': 2*leg_price
                 }
-                if leg_price>10:
+                if leg_price>8:
                   initiate_ws(new_position['CE_or_PE'],closest_strike_pe)
                   time_.sleep(4)
 
@@ -407,7 +408,7 @@ def check_profit_target_and_add_position(positions_df,path):
                   time_.sleep(4)
              
             # Create DataFrame for new position and concatenate
-            if leg_price>10:
+            if leg_price>8:
               new_position_df = pd.DataFrame([new_position])
               positions_df = pd.concat([positions_df, new_position_df], ignore_index=True)
               positions_df.to_csv(path,header=True,index=False)
@@ -417,6 +418,7 @@ def check_profit_target_and_add_position(positions_df,path):
                   writer = csv.writer(file)
                   writer.writerow([today, datetime.now().strftime('%H:%M:%S'), new_position['strike'], new_position['CE_or_PE'], 'Sell', leg_price])
             else:
+              adding_pos = False
               print("Premium is less than 10")
           
 
