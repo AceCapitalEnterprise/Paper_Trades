@@ -420,7 +420,7 @@ def check_profit_target_and_add_position(positions_df,path):
                   writer.writerow([today, datetime.now().strftime('%H:%M:%S'), new_position['strike'], new_position['CE_or_PE'], 'Sell', leg_price])
             else:
               adding_pos = False
-              print("Premium is less than 10")
+              print("Premium is less than 8")
           
 
         # Debug: Print the updated positions_df
