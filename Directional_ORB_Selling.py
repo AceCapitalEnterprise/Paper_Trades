@@ -318,7 +318,8 @@ def closest_call_otm():
 
 def check_profit_target_and_add_position(positions_df,path):
     
-    if not positions_df.empty:
+  global adding_pos  
+  if not positions_df.empty:
         last_position = positions_df.iloc[-1]
         # initiate_ws(last_position['CE_or_PE'],last_position['strike'])
         
