@@ -355,6 +355,7 @@ def check_profit_target_and_add_position(positions_df,path):
                   leg_response = breeze.get_option_chain_quotes(stock_code="NIFTY", exchange_code="NFO",
                                                               product_type="options", expiry_date=f'{expiry}T06:00:00.000Z',
                                                               right="put", strike_price=closest_strike_pe)
+                  time.sleep(2)
                   print("leg_response",leg_response)
                   if leg_response['Status']==200:
                     leg = leg_response['Success']
@@ -384,6 +385,7 @@ def check_profit_target_and_add_position(positions_df,path):
                   leg_response = breeze.get_option_chain_quotes(stock_code="NIFTY", exchange_code="NFO",
                                                                 product_type="options", expiry_date=f'{expiry}T06:00:00.000Z',
                                                                 right="call", strike_price=closest_call_ce)
+                  time.sleep(2)
                   print("leg_response",leg_response)
                   if leg_response['Status']==200:
                     leg = leg_response['Success']
