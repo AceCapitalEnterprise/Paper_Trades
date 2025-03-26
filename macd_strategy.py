@@ -388,7 +388,7 @@ def main():
                         last_row = olhc.iloc[-1]
                         second_last = olhc.iloc[-2]
                         third_last = olhc.iloc[-3]
-                        macd_pe_exit=(last_row['MACD'] < second_last['MACD'] and second_last['MACD'] < third_last['MACD'])
+                        macd_pe_exit=(last_row['MACD'] > second_last['MACD'] and second_last['MACD'] > third_last['MACD'])
                         
                     
                         if data_key_pe in tick_data:
