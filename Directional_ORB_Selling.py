@@ -40,14 +40,14 @@ except Exception as e:
 # Constants
 TIME_1 = datetime.strptime("09:15", "%H:%M").time()
 TIME_2 = datetime.strptime("15:20", "%H:%M").time()
-EXPIRY = '2025-03-27'
+EXPIRY = '2025-04-03'
 QTY = 225
 
 atm_strike=None
 open_position=None
 # expiry = '2025-03-27'      
 # expiry1 = '27-Mar-2025'
-FUT_EXPIRY = '2025-03-27'
+FUT_EXPIRY = '2025-04-24'
 adding_pos = True
 max_position = 3
 spot_price=None
