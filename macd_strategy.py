@@ -35,7 +35,7 @@ except Exception as e:
 # Constants
 TIME_1 = datetime.strptime("09:15", "%H:%M").time()
 TIME_2 = datetime.strptime("15:20", "%H:%M").time()
-EXPIRY = '2025-04-03'
+EXPIRY = '2025-04-09'
 QTY = 75
 
 # Global variables
