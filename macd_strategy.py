@@ -24,7 +24,7 @@ try:
     breeze = BreezeConnect(api_key="77%U3I71634^099gN232777%316Q~v4=")
     breeze.generate_session(
         api_secret="9331K77(I8_52JG2K73$5438q95772j@",
-        session_token="51150056"
+        session_token="51190178"
     )
     print("BreezeConnect initialized successfully")
 except Exception as e:
@@ -35,7 +35,7 @@ except Exception as e:
 # Constants
 TIME_1 = datetime.strptime("09:15", "%H:%M").time()
 TIME_2 = datetime.strptime("15:20", "%H:%M").time()
-EXPIRY = '2025-04-09'
+EXPIRY = '2025-04-17'
 QTY = 75
 
 # Global variables
