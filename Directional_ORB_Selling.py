@@ -29,7 +29,7 @@ try:
     breeze = BreezeConnect(api_key="77%U3I71634^099gN232777%316Q~v4=")
     breeze.generate_session(
         api_secret="9331K77(I8_52JG2K73$5438q95772j@",
-        session_token="51451617"
+        session_token="51017375"
     )
     print("BreezeConnect initialized successfully")
 except Exception as e:
@@ -40,14 +40,14 @@ except Exception as e:
 # Constants
 TIME_1 = datetime.strptime("09:15", "%H:%M").time()
 TIME_2 = datetime.strptime("15:20", "%H:%M").time()
-EXPIRY = '2025-05-15'
+EXPIRY = '2025-03-27'
 QTY = 225
 
 atm_strike=None
 open_position=None
 # expiry = '2025-03-27'      
 # expiry1 = '27-Mar-2025'
-FUT_EXPIRY = '2025-05-29'
+FUT_EXPIRY = '2025-03-27'
 adding_pos = True
 max_position = 3
 spot_price=None
@@ -250,29 +250,29 @@ def update_trailing_sl(positions_df,path):
 
         
         if current_price is not None and float(current_price) >= position['trailing_sl']:
-            # order_detail = breeze.square_off(exchange_code="NFO",
-            #                                     product="options",
-            #                                     stock_code="NIFTY",
-            #                                     expiry_date=f"{EXPIRY}T06:00:00.000Z",
-            #                                     right=str(position['CE_or_PE']),
-            #                                     strike_price=str(position['strike']),
-            #                                     action="buy",
-            #                                     order_type="market",
-            #                                     validity="day",
-            #                                     stoploss="0",
-            #                                     quantity=QTY,
-            #                                     price="0",
-            #                                     trade_password="",
-            #                                     disclosed_quantity="0")
+            order_detail = breeze.square_off(exchange_code="NFO",
+                                                product="options",
+                                                stock_code="NIFTY",
+                                                expiry_date=f"{EXPIRY}T06:00:00.000Z",
+                                                right=str(position['CE_or_PE']),
+                                                strike_price=str(position['strike']),
+                                                action="buy",
+                                                order_type="market",
+                                                validity="day",
+                                                stoploss="0",
+                                                quantity=QTY,
+                                                price="0",
+                                                trade_password="",
+                                                disclosed_quantity="0")
             
-            # time_.sleep(5)
-            # order_detail = order_detail['Success']
-            # order_detail = order_detail['order_id']
-            # order_detail = breeze.get_trade_detail(exchange_code="NFO", order_id=order_detail)
-            # order_detail = order_detail['Success']
-            # order_detail = pd.DataFrame(order_detail)
-            # sell_pe_price = order_detail['execution_price']
-            # current_price = float(sell_pe_price[0])
+            time_.sleep(5)
+            order_detail = order_detail['Success']
+            order_detail = order_detail['order_id']
+            order_detail = breeze.get_trade_detail(exchange_code="NFO", order_id=order_detail)
+            order_detail = order_detail['Success']
+            order_detail = pd.DataFrame(order_detail)
+            sell_pe_price = order_detail['execution_price']
+            current_price = float(sell_pe_price[0])
 
             positions_to_exit.append(index)
             time = datetime.now().strftime('%H:%M:%S')
@@ -421,8 +421,8 @@ def check_profit_target_and_add_position(positions_df, path, ce_or_pe):
 
             if 10.5<nearest_premium<14 :
                 
-                # leg_price=place_order('sell',ce_or_pe,str(strike),QTY)
-                leg_price=leg_premium(ce_or_pe,str(strike))
+                leg_price=place_order('sell',ce_or_pe,str(strike),QTY)
+                # leg_price=leg_premium(ce_or_pe,str(strike))
                 print(f"Leg Price for Put: {leg_price}")
 
 
@@ -611,8 +611,8 @@ def main():
                             order = 1
                             time = datetime.now().strftime('%H:%M:%S')
                             
-                            # entry_premium=place_order('sell','put',str(closest_strike_pe),QTY)
-                            entry_premium=leg_premium('put',str(closest_strike_pe))
+                            entry_premium=place_order('sell','put',str(closest_strike_pe),QTY)
+                            # entry_premium=leg_premium('put',str(closest_strike_pe))
 
                             SL = entry_premium
                             tsl = entry_premium + SL
@@ -674,8 +674,8 @@ def main():
                             order = -1
                             time = datetime.now().strftime('%H:%M:%S')
                             
-                            # entry_premium=place_order('sell','call',str(closest_strike_ce),QTY)
-                            entry_premium=leg_premium('call',str(closest_strike_ce))
+                            entry_premium=place_order('sell','call',str(closest_strike_ce),QTY)
+                            # entry_premium=leg_premium('call',str(closest_strike_ce))
                             
                             SL = entry_premium
                             tsl = entry_premium + SL
